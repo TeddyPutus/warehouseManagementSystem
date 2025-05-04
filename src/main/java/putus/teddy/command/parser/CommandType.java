@@ -5,4 +5,5 @@ public enum CommandType {
     EXIT,
     REGISTER_SUPPLIER,
     FIND_SUPPLIERS,
+    DEFAULT,
 }
