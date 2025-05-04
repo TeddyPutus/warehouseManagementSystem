@@ -1,4 +1,4 @@
-package putus.teddy.data.repository.entity;
+package putus.teddy.data.entity;
 
 import java.util.Map;
 
