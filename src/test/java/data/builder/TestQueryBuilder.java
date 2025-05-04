@@ -11,7 +11,6 @@ import static org.mockito.Mockito.*;
 public class TestQueryBuilder {
     @Test
     public void testSupplierQuery() {
-        System.out.println(org.mockito.internal.configuration.plugins.Plugins.getMockMaker().getClass());
         try (MockedStatic<InputParser> utilities = mockStatic(InputParser.class)) {
             utilities.when(() -> InputParser.parseString(anyString(), anyBoolean())).thenReturn("Test name").thenReturn("Test phone").thenReturn("Test email");
 
