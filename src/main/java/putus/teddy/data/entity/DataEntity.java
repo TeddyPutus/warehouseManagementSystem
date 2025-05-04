@@ -15,4 +15,7 @@ public abstract class DataEntity {
         return id;
     }
 
+    public boolean compareDoubles(double a, double b) {
+        return Math.abs(a - b) < 0.0001;
+    }
 }
