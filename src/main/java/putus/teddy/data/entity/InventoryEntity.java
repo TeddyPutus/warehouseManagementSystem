@@ -3,79 +3,47 @@ package putus.teddy.data.entity;
 import java.util.Map;
 
 public class InventoryEntity extends DataEntity{
-    private static int idCounter=0;
     private String itemName;
-    private int quantity;
+    private Integer quantity;
     private Double pricePerUnit;
     private static final String columnWidth = "| %-10s | %8s | %10s |";
     private static final String tableHead = String.format(columnWidth, "ITEM NAME", "QUANTITY", "PRICE/UNIT");
 
-    public InventoryEntity(String itemName, int quantity, Double pricePerUnit) {
+    public InventoryEntity(String itemName, Integer quantity, Double pricePerUnit) {
         this.itemName = itemName;
         this.quantity = quantity;
         this.pricePerUnit = pricePerUnit;
-        this.id = InventoryEntity.getIdCounter();
-
-        InventoryEntity.incrementIdCounter();
     }
 
     public void update(Map<String, Object> query) {
-        if (query.containsKey("itemName")) {
-            this.itemName = (String) query.get("itemName");
-        }
-        if (query.containsKey("quantity")) {
-            this.quantity = (int) query.get("quantity");
-        }
-        if (query.containsKey("pricePerUnit")) {
-            this.pricePerUnit = (Double) query.get("pricePerUnit");
-        }
+        query.forEach((key, value) -> {
+            switch (key) {
+                case "itemName" -> this.itemName = (String) value;
+                case "quantity" -> this.quantity = (Integer) value;
+                case "pricePerUnit" -> this.pricePerUnit = (Double) value;
+            }
+        });
     }
 
     public boolean matches(Map<String, Object> queryMap) {
-        return queryMap.keySet().stream()
-                .allMatch(key -> {
-                    switch (key) {
-                        case "id" -> {
-                            if (!queryMap.get(key).equals(id)) {
-                                return false;
-                            }
-                        }
-                        case "itemName" -> {
-                            if (!queryMap.get(key).equals(itemName)) {
-                                return false;
-                            }
-                        }
-                        case "quantity" -> {
-                            if (!queryMap.get(key).equals(quantity)) {
-                                return false;
-                            }
-                        }
-                        case "pricePerUnit" -> {
-                            if (!compareDoubles((double) queryMap.get(key), pricePerUnit)) {
-                                return false;
-                            }
-                        }
-                        default -> {
-                            return false;
-                        }
-                    }
-                    return true;
+        return queryMap.entrySet().stream()
+                .allMatch(entry -> {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+
+                    return switch (key) {
+                        case "itemName" -> itemName.equals(value);
+                        case "quantity" -> quantity.equals(value);
+                        case "pricePerUnit" -> value instanceof Double && DataEntity.compareDoubles(pricePerUnit, (Double) value);
+                        default -> false;
+                    };
                 });
-    }
-    public static int getIdCounter() {
-        return idCounter;
-    }
-    public static void incrementIdCounter() {
-        InventoryEntity.idCounter++;
     }
 
     public static void printTableHead() {
-        System.out.println("-".repeat(tableHead.length()));
-        System.out.println(tableHead);
-        System.out.println("-".repeat(tableHead.length()));
+        DataEntity.printTableHead(tableHead);
     }
 
-    @Override
     public void printTableRow() {
         System.out.printf(columnWidth + "\n", itemName, quantity, pricePerUnit);
     }

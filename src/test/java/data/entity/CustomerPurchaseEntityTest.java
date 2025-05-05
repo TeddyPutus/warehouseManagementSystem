@@ -19,17 +19,6 @@ public class CustomerPurchaseEntityTest {
     }
 
     @Test
-    public void testIncrementId() {
-        int initialId = CustomerPurchaseEntity.getIdCounter();
-        CustomerPurchaseEntity newEntity = new CustomerPurchaseEntity("Ted", "Item1",10, "2025-01-01");
-        assertEquals(initialId + 1, CustomerPurchaseEntity.getIdCounter());
-        CustomerPurchaseEntity anotherEntity = new CustomerPurchaseEntity("Ted", "Item1",10, "2025-01-01");
-        assertEquals(initialId, newEntity.getId());
-        assertEquals(initialId + 1, anotherEntity.getId());
-        assertEquals(initialId + 2, CustomerPurchaseEntity.getIdCounter());
-    }
-
-    @Test
     public void testConstructor() {
         assertEquals("Ted", customerPurchase.getCustomerName());
 
@@ -87,9 +76,9 @@ public class CustomerPurchaseEntityTest {
 
         CustomerPurchaseEntity.printTableHead();
 
-        String expectedOutput = "---------------------------------------------------------------------------------------------\n" +
-                "| CUSTOMER NAME   | PURCHASED ITEM       |    QUANTITY | TOTAL PRICE | PURCHASE DATE        |\n" +
-                "---------------------------------------------------------------------------------------------\n";
+        String expectedOutput = "------------------------------------------------------------------------------------------------------------------------------------\n" +
+                "| ID                                   | CUSTOMER NAME   | PURCHASED ITEM       |    QUANTITY | TOTAL PRICE | PURCHASE DATE        |\n" +
+                "------------------------------------------------------------------------------------------------------------------------------------\n";
         assertTrue(outContent.toString().contains(expectedOutput));
 
         System.setOut(System.out);

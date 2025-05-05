@@ -19,17 +19,6 @@ public class InventoryEntityTest {
     }
 
     @Test
-    public void testIncrementId() {
-        int initialId = InventoryEntity.getIdCounter();
-        InventoryEntity newItem = new InventoryEntity("Item1", 10, 100.0);
-        assertEquals(initialId + 1, InventoryEntity.getIdCounter());
-        InventoryEntity anotherItem = new InventoryEntity("Item1", 10, 100.0);
-        assertEquals(initialId, newItem.getId());
-        assertEquals(initialId + 1, anotherItem.getId());
-        assertEquals(initialId + 2, InventoryEntity.getIdCounter());
-    }
-
-    @Test
     public void testConstructor() {
         assertEquals("Item1", inventoryItem.getItemName());
         assertEquals(10, inventoryItem.getQuantity());
@@ -53,7 +42,6 @@ public class InventoryEntityTest {
     @Test
     public void testMatches() {
         HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("id", inventoryItem.getId());
         queryMap.put("itemName", "Item1");
         queryMap.put("quantity", 10);
         queryMap.put("pricePerUnit", 100.0);
@@ -74,7 +62,7 @@ public class InventoryEntityTest {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
-        inventoryItem.printTableHead();
+        InventoryEntity.printTableHead();
 
         String expectedOutput =  "--------------------------------------\n" +
                 "| ITEM NAME  | QUANTITY | PRICE/UNIT |\n" +

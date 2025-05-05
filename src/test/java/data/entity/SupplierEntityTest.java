@@ -21,17 +21,6 @@ public class SupplierEntityTest {
 
 
     @Test
-    public void testIncrementId() {
-        int initialId = SupplierEntity.getIdCounter();
-        SupplierEntity newEntity = new SupplierEntity("Test Supplier", "1234567890", "test@example.com");
-        assertEquals(initialId + 1, SupplierEntity.getIdCounter());
-        SupplierEntity anotherEntity = new SupplierEntity("Test Supplier", "1234567890", "test@example.com");
-        assertEquals(initialId, newEntity.getId());
-        assertEquals(initialId + 1, anotherEntity.getId());
-        assertEquals(initialId + 2, SupplierEntity.getIdCounter());
-    }
-
-    @Test
     public void testConstructor() {
         assertEquals("Test Supplier", supplier.getName());
         assertEquals("1234567890", supplier.getPhoneNumber());
@@ -57,11 +46,11 @@ public class SupplierEntityTest {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
-        supplier.printTableHead();
+        SupplierEntity.printTableHead();
 
-        String expectedOutput = "----------------------------------------------------\n" +
-                "| NAME       |        PHONE | EMAIL                |\n" +
-                "----------------------------------------------------\n";
+        String expectedOutput = "-------------------------------------------------------------------------------------------\n" +
+                "| ID                                   | NAME       |        PHONE | EMAIL                |\n" +
+                "-------------------------------------------------------------------------------------------\n";
         assertEquals(expectedOutput, outContent.toString());
     }
 
@@ -73,7 +62,7 @@ public class SupplierEntityTest {
         supplier.printTableRow();
 
         String expectedOutput = "| Test Supplier |   1234567890 | test@example.com     |\n";
-        assertEquals(expectedOutput, outContent.toString());
+        assertTrue(outContent.toString().contains(expectedOutput));
     }
 
     @Test
