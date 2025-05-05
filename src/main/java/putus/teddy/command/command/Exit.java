@@ -1,9 +1,11 @@
 package putus.teddy.command.command;
 
+import putus.teddy.printer.Printer;
+
 public class Exit implements Command {
 
     public boolean execute() {
-        System.out.println("Exiting the application...");
+        Printer.info("Exiting the application...");
         return true;
     }
 }

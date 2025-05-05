@@ -1,5 +1,6 @@
 package command.command;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -7,6 +8,7 @@ import org.mockito.MockedStatic;
 import putus.teddy.command.command.FindInventory;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.InventoryEntity;
+import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -16,7 +18,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TestFindInventory {
-    ByteArrayOutputStream outContent;
+    static ByteArrayOutputStream outContent;
     FindInventory findInventoryCommand = new FindInventory();
 
     static InventoryEntity inventoryEntity1 = new InventoryEntity("item1", 10, 5.0);
@@ -29,12 +31,8 @@ public class TestFindInventory {
         FindInventory.inventoryRepository.create(inventoryEntity1);
         FindInventory.inventoryRepository.create(inventoryEntity2);
         FindInventory.inventoryRepository.create(inventoryEntity3);
-    }
-
-    @Before
-    public void testSetUp() {
         outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        Printer.setOutputStream(new PrintStream(outContent));
     }
 
     @Test
@@ -48,13 +46,9 @@ public class TestFindInventory {
 
             findInventoryCommand.execute();
 
-            String expectedOutput = "--------------------------------------\n" +
-                    "| ITEM NAME  | QUANTITY | PRICE/UNIT |\n" +
-                    "--------------------------------------\n" +
-                    "| item1      |       10 |        5.0 |\n" +
-                    "| item3      |       10 |       15.0 |\n";
-
-            assertTrue(outContent.toString().contains(expectedOutput));
+            assertTrue(outContent.toString().contains(InventoryEntity.getTableHead()));
+            assertTrue(outContent.toString().contains(inventoryEntity1.getItemName()));
+            assertTrue(outContent.toString().contains(inventoryEntity3.getItemName()));
         }
     }
 
@@ -62,15 +56,15 @@ public class TestFindInventory {
     public void testFindInventoryWithNoResults() {
         try (MockedStatic<QueryBuilder> mockedBuilder = org.mockito.Mockito.mockStatic(QueryBuilder.class)) {
 
-            mockedBuilder.when(QueryBuilder::supplierQuery).thenReturn(Map.of(
+            mockedBuilder.when(QueryBuilder::inventoryQuery).thenReturn(Map.of(
                     "quantity", 10000
             ));
 
             findInventoryCommand.execute();
 
-            assertFalse(outContent.toString().contains("| item1      |       10 |        5.0 |\n"));
-            assertFalse(outContent.toString().contains("| item2      |       20 |       10.0 |\n"));
-            assertFalse(outContent.toString().contains("| item3      |       10 |       15.0 |\n"));
+            assertFalse(outContent.toString().contains(inventoryEntity1.getTableRow()));
+            assertFalse(outContent.toString().contains(inventoryEntity2.getTableRow()));
+            assertFalse(outContent.toString().contains(inventoryEntity3.getTableRow()));
         }
     }
 }

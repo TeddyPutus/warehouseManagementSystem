@@ -1,5 +1,6 @@
 package command.command;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -8,6 +9,7 @@ import putus.teddy.command.command.UpdateSupplier;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.parser.InputParser;
+import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -16,7 +18,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class TestUpdateSupplier {
-    ByteArrayOutputStream outContent;
+    static ByteArrayOutputStream outContent;
     UpdateSupplier command = new UpdateSupplier();
 
     static SupplierEntity entity1 = new SupplierEntity("item1", "1234", "email");
@@ -25,12 +27,13 @@ public class TestUpdateSupplier {
     public static void classSetUp() {
         UpdateSupplier.supplierRepository.deleteMany(Map.of());
         UpdateSupplier.supplierRepository.create(entity1);
+        outContent = new ByteArrayOutputStream();
+        Printer.setOutputStream(new PrintStream(outContent));
     }
 
     @Before
     public void testSetUp() {
-        outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        outContent.reset();
     }
 
     @Test

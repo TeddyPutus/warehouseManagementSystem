@@ -1,5 +1,6 @@
 package command.command;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import putus.teddy.data.builder.EntityBuilder;
 import putus.teddy.data.entity.CustomerPurchaseEntity;
 import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
+import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -19,16 +21,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestCustomerOrder {
-    ByteArrayOutputStream outContent;
+    static ByteArrayOutputStream outContent;
     CustomerOrder command = new CustomerOrder();
 
     static InventoryEntity inventoryEntity = new InventoryEntity("item1", 1, 1.0);
     static FinancialEntity financialEntity = new FinancialEntity("item1", 0, 0, 10.0, 0.0);
 
+    @BeforeClass
+    public static void setUpClass() {
+        outContent = new ByteArrayOutputStream();
+        Printer.setOutputStream(new PrintStream(outContent));
+    }
+
     @Before
     public void testSetUp() {
-        outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
 
 
         RegisterItem.inventoryRepository.deleteMany(Map.of());
@@ -92,7 +98,7 @@ public class TestCustomerOrder {
 
             String output = outContent.toString();
 
-            assertTrue(output.contains("!!! ALERT: Stock for item1 is low. Please order more stock. !!!"));
+            assertTrue(output.contains("Stock for item1 is low. Please order more stock."));
         }
     }
 

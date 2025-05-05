@@ -59,26 +59,16 @@ public class InventoryEntityTest {
 
     @Test
     public void testPrintTableHeader() {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
 
-        InventoryEntity.printTableHead();
-
-        String expectedOutput =  "--------------------------------------\n" +
-                "| ITEM NAME  | QUANTITY | PRICE/UNIT |\n" +
-                "--------------------------------------\n";
-        assertEquals(expectedOutput, outContent.toString());
+        String expectedOutput = "| ITEM NAME  | QUANTITY | PRICE/UNIT |";
+        assertEquals(expectedOutput, InventoryEntity.getTableHead());
     }
 
     @Test
     public void testPrintTableRow() {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-
-        inventoryItem.printTableRow();
 
         String expectedOutput = "| Item1      |       10 |      100.0 |\n";
-        assertEquals(expectedOutput, outContent.toString());
+        assertEquals(expectedOutput, inventoryItem.getTableRow());
 
         System.setOut(System.out);
     }

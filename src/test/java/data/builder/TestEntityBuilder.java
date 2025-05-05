@@ -4,19 +4,19 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import putus.teddy.data.builder.EntityBuilder;
 import putus.teddy.data.parser.InputParser;
+import putus.teddy.data.parser.ValidatedInputParser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mockStatic;
 
 public class TestEntityBuilder {
     @Test
     public void testBuildInventoryEntity() {
-        try (MockedStatic<InputParser> utilities = mockStatic(InputParser.class)) {
-            utilities.when(() -> InputParser.parseString(anyString(), anyBoolean())).thenReturn("Test item");
-            utilities.when(() -> InputParser.parseDouble(anyString(), anyBoolean())).thenReturn(10.0);
+        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
+            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("Test item");
+            utilities.when(() -> ValidatedInputParser.parseAmount(anyString(), anyBoolean())).thenReturn(10.0);
 
             var inventoryEntity = EntityBuilder.buildInventoryEntity();
             assertNotNull(inventoryEntity);
@@ -28,8 +28,8 @@ public class TestEntityBuilder {
 
     @Test
     public void testBuildSupplierEntity() {
-        try (MockedStatic<InputParser> utilities = mockStatic(InputParser.class)) {
-            utilities.when(() -> InputParser.parseString(anyString(), anyBoolean())).thenReturn("Test name").thenReturn("1234").thenReturn("test@test.com");
+        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
+            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("Test name").thenReturn("1234").thenReturn("test@test.com");
 
             var supplierEntity = EntityBuilder.buildSupplierEntity();
             assertNotNull(supplierEntity);
@@ -40,10 +40,10 @@ public class TestEntityBuilder {
 
     @Test
     public void testBuildSupplierPurchaseEntity() {
-        try (MockedStatic<InputParser> utilities = mockStatic(InputParser.class)) {
-            utilities.when(() -> InputParser.parseString(anyString(), anyBoolean())).thenReturn("Test supplier").thenReturn("Test item");
-            utilities.when(() -> InputParser.parseInt(anyString(), anyBoolean())).thenReturn(10);
-            utilities.when(() -> InputParser.parseDouble(anyString(), anyBoolean())).thenReturn(120.0);
+        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
+            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("Test supplier").thenReturn("Test item");
+            utilities.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(10);
+            utilities.when(() -> ValidatedInputParser.parseAmount(anyString(), anyBoolean())).thenReturn(120.0);
 
             var supplierPurchaseEntity = EntityBuilder.buildSupplierPurchaseEntity();
             assertNotNull(supplierPurchaseEntity);
@@ -57,9 +57,9 @@ public class TestEntityBuilder {
 
     @Test
     public void testBuildCustomerPurchaseEntity() {
-        try (MockedStatic<InputParser> utilities = mockStatic(InputParser.class)) {
-            utilities.when(() -> InputParser.parseString(anyString(), anyBoolean())).thenReturn("Test customer").thenReturn("Test item");
-            utilities.when(() -> InputParser.parseInt(anyString(), anyBoolean())).thenReturn(10);
+        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
+            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("Test customer").thenReturn("Test item");
+            utilities.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(10);
 
             var customerPurchaseEntity = EntityBuilder.buildCustomerPurchaseEntity();
             assertNotNull(customerPurchaseEntity);

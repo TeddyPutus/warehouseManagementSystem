@@ -46,23 +46,14 @@ public class SupplierEntityTest {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
-        SupplierEntity.printTableHead();
-
-        String expectedOutput = "-------------------------------------------------------------------------------------------\n" +
-                "| ID                                   | NAME       |        PHONE | EMAIL                |\n" +
-                "-------------------------------------------------------------------------------------------\n";
-        assertEquals(expectedOutput, outContent.toString());
+        String expectedOutput = "| ID                                   | NAME            |        PHONE | EMAIL                |";
+        assertEquals(expectedOutput, SupplierEntity.getTableHead());
     }
 
     @Test
     public void testPrintTableRow() {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-
-        supplier.printTableRow();
-
-        String expectedOutput = "| Test Supplier |   1234567890 | test@example.com     |\n";
-        assertTrue(outContent.toString().contains(expectedOutput));
+        String expectedOutput = "| Test Supplier   |   1234567890 | test@example.com     |\n";
+        assertTrue(supplier.getTableRow().contains(expectedOutput));
     }
 
     @Test

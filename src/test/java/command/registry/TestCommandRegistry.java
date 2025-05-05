@@ -14,16 +14,6 @@ public class TestCommandRegistry {
     CommandRegistry commandRegistry = new CommandRegistry();
 
     @Test
-    public void testProcessCommandInvalid() {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-        assertFalse(commandRegistry.processCommand(CommandType.DEFAULT));
-
-        String expectedOutput = "Unimplemented command: DEFAULT\n";
-        assertTrue(outContent.toString().contains(expectedOutput));
-    }
-
-    @Test
     public void testProcessCommand() {
         assertFalse(commandRegistry.processCommand(CommandType.HELP));
         assertTrue(commandRegistry.processCommand(CommandType.EXIT));

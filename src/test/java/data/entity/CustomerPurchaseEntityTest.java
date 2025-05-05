@@ -71,17 +71,9 @@ public class CustomerPurchaseEntityTest {
 
     @Test
     public void testPrintTableHead() {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        String expectedOutput = "| ID                                   | CUSTOMER NAME   | PURCHASED ITEM       |    QUANTITY | TOTAL PRICE | PURCHASE DATE        |";
+        assertTrue(CustomerPurchaseEntity.getTableHead().contains(expectedOutput));
 
-        CustomerPurchaseEntity.printTableHead();
-
-        String expectedOutput = "------------------------------------------------------------------------------------------------------------------------------------\n" +
-                "| ID                                   | CUSTOMER NAME   | PURCHASED ITEM       |    QUANTITY | TOTAL PRICE | PURCHASE DATE        |\n" +
-                "------------------------------------------------------------------------------------------------------------------------------------\n";
-        assertTrue(outContent.toString().contains(expectedOutput));
-
-        System.setOut(System.out);
     }
 
     @Test
@@ -89,10 +81,8 @@ public class CustomerPurchaseEntityTest {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
 
-        customerPurchase.printTableRow();
-
         String expectedOutput = "| Ted             | Item1                |         100 |         0.0 | 2023-10-01           |\n";
-        assertTrue(outContent.toString().contains(expectedOutput));
+        assertTrue(customerPurchase.getTableRow().contains(expectedOutput));
 
         System.setOut(System.out);
     }

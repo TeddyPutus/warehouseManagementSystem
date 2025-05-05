@@ -1,31 +1,29 @@
 package putus.teddy.command.command;
 
 import putus.teddy.data.entity.FinancialEntity;
-import putus.teddy.data.repository.InMemoryRepository;
-
-import java.util.HashMap;
-import java.util.stream.Stream;
+import putus.teddy.printer.Printer;
 
 public class GenerateReport implements Command {
 
     public boolean execute() {
-        System.out.println("Generating financial report...");
+        Printer.info("Generating financial report...");
 
         double[] totals = {0.0, 0.0};
 
-        FinancialEntity.printTableHead();
-        Stream<FinancialEntity> financialEntities = financialRepository.findAll();
+        Printer.printTable(
+                financialRepository.findAll().map(entity -> entity),
+                FinancialEntity.getTableHead()
+        );
 
-        financialEntities.forEach( entity -> {
+        financialRepository.findAll().forEach( entity -> {
             totals[0] += entity.getTotalRevenue();
             totals[1] += entity.getTotalCost();
-            entity.printTableRow();
         }
         );
 
-        System.out.println("Total Sales: " + totals[0]);
-        System.out.println("Total Expenses: " + totals[1]);
-        System.out.println("Net Profit: " + (totals[0] - totals[1]));
+        Printer.info("Total Sales: " + totals[0]);
+        Printer.info("Total Expenses: " + totals[1]);
+        Printer.info("Net Profit: " + (totals[0] - totals[1]));
 
         return false;
     }

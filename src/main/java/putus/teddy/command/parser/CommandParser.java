@@ -1,5 +1,7 @@
 package putus.teddy.command.parser;
 
+import putus.teddy.printer.Printer;
+
 import java.util.Scanner;
 
 public class CommandParser {
@@ -10,13 +12,13 @@ public class CommandParser {
     }
 
     public static CommandType parseCommand() {
-        System.out.print("Enter command: ");
+        Printer.info("Enter command: ", false);
         String input = scanner.nextLine();
 
         try {
             return CommandType.valueOf(input.toUpperCase());
         } catch (IllegalArgumentException e) {
-            System.out.println("Invalid command. Please try again.");
+            Printer.warning("Invalid command. Please try again.");
             return parseCommand();
         }
     }

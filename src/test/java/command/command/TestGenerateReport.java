@@ -1,11 +1,13 @@
 package command.command;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import putus.teddy.command.command.FindInventory;
 import putus.teddy.command.command.GenerateReport;
 import putus.teddy.data.entity.FinancialEntity;
+import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -14,7 +16,7 @@ import java.util.Map;
 import static org.junit.Assert.assertTrue;
 
 public class TestGenerateReport {
-    ByteArrayOutputStream outContent;
+    static ByteArrayOutputStream outContent;
     GenerateReport command = new GenerateReport();
 
     static FinancialEntity entity1 = new FinancialEntity("item1", 1, 10, 10.0, 20.0);
@@ -27,12 +29,8 @@ public class TestGenerateReport {
         FindInventory.financialRepository.create(entity1);
         FindInventory.financialRepository.create(entity2);
         FindInventory.financialRepository.create(entity3);
-    }
-
-    @Before
-    public void testSetUp() {
         outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        Printer.setOutputStream(new PrintStream(outContent));
     }
 
     @Test

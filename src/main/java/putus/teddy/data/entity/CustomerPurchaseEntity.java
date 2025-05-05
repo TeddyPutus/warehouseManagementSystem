@@ -3,7 +3,7 @@ package putus.teddy.data.entity;
 import java.util.Map;
 import java.util.UUID;
 
-public class CustomerPurchaseEntity extends DataEntity{
+public class CustomerPurchaseEntity implements DataEntity{
     private final String id = UUID.randomUUID().toString();
     private String customerName;
     private String itemName;
@@ -78,11 +78,11 @@ public class CustomerPurchaseEntity extends DataEntity{
         return id;
     }
 
-    public static void printTableHead() {
-        DataEntity.printTableHead(tableHead);
+    public static String getTableHead() {
+        return tableHead;
     }
 
-    public void printTableRow() {
-        System.out.printf(columnWidth + "\n", id, customerName, itemName, quantity, totalPrice, purchaseDate);
+    public String getTableRow() {
+        return String.format(columnWidth + "\n", id, customerName, itemName, quantity, totalPrice, purchaseDate);
     }
 }
