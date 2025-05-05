@@ -53,6 +53,7 @@ public class SupplierPurchaseEntity extends DataEntity {
                     Object value = entry.getValue();
 
                     return switch (key) {
+                        case "id" -> id.equals(value);
                         case "supplierName" -> supplierName.equals(value);
                         case "purchaseDate" -> purchaseDate.equals(value);
                         case "itemName" -> itemName.equals(value);

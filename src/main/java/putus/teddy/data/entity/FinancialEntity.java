@@ -78,6 +78,9 @@ public class FinancialEntity extends DataEntity {
     public int getQuantitySold() {
         return quantitySold;
     }
+    public double getProfit() {
+        return profit;
+    }
 
     public void setTotalRevenue(double totalRevenue) {
         this.totalRevenue = totalRevenue;
