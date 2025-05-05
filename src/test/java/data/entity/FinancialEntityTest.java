@@ -20,17 +20,6 @@ public class FinancialEntityTest {
     }
 
     @Test
-    public void testIncrementId() {
-        int initialId = FinancialEntity.getIdCounter();
-        FinancialEntity newEntity = new FinancialEntity("Test Entity", 10,2, 1000.0, 500.0);
-        assertEquals(initialId + 1, FinancialEntity.getIdCounter());
-        FinancialEntity anotherEntity = new FinancialEntity("Test Entity", 10,2, 1000.0, 500.0);
-        assertEquals(initialId, newEntity.getId());
-        assertEquals(initialId + 1, anotherEntity.getId());
-        assertEquals(initialId + 2, FinancialEntity.getIdCounter());
-    }
-
-    @Test
     public void testConstructor() {
         assertEquals(1000.0, financialEntity.getTotalCost(), 0.01);
         assertEquals(500.0, financialEntity.getTotalRevenue(), 0.01);
@@ -52,7 +41,6 @@ public class FinancialEntityTest {
     @Test
     public void testMatches() {
         HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("id", financialEntity.getId());
         queryMap.put("totalRevenue", 500.0);
         queryMap.put("totalCost", 1000.0);
 

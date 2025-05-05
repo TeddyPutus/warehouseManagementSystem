@@ -1,16 +1,17 @@
 package putus.teddy.data.entity;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class CustomerPurchaseEntity extends DataEntity{
-    private static int idCounter=0;
+    private final String id = UUID.randomUUID().toString();
     private String customerName;
     private String itemName;
-    private int quantity;
+    private Integer quantity;
     private Double totalPrice;
     private String purchaseDate;
-    private static final String columnWidth = "| %-15s | %-20s | %11s | %11s | %-20s |";
-    private static final String tableHead = String.format(columnWidth, "CUSTOMER NAME", "PURCHASED ITEM", "QUANTITY", "TOTAL PRICE", "PURCHASE DATE");
+    private static final String columnWidth = "| %-36s | %-15s | %-20s | %11s | %11s | %-20s |";
+    private static final String tableHead = String.format(columnWidth, "ID", "CUSTOMER NAME", "PURCHASED ITEM", "QUANTITY", "TOTAL PRICE", "PURCHASE DATE");
 
     public CustomerPurchaseEntity(String customerName, String itemName, int quantity, String purchaseDate) {
         this.customerName = customerName;
@@ -18,68 +19,34 @@ public class CustomerPurchaseEntity extends DataEntity{
         this.quantity = quantity;
         this.purchaseDate = purchaseDate;
         this.totalPrice = 0.0;
-        this.id = CustomerPurchaseEntity.getIdCounter();
-
-        CustomerPurchaseEntity.incrementIdCounter();
     }
 
     public void update(Map<String, Object> query) {
-        if (query.containsKey("customerName")) {
-            this.customerName = (String) query.get("customerName");
-        }
-        if (query.containsKey("itemName")) {
-            this.itemName = (String) query.get("itemName");
-        }
-        if (query.containsKey("totalPrice")) {
-            this.totalPrice = (Double) query.get("totalPrice");
-        }
-        if (query.containsKey("purchaseDate")) {
-            this.purchaseDate = (String) query.get("purchaseDate");
-        }
-        if (query.containsKey("quantity")) {
-            this.quantity = (int) query.get("quantity");
-        }
+        query.forEach((key, value) -> {
+            switch (key) {
+                case "customerName" -> this.customerName = (String) value;
+                case "itemName" -> this.itemName = (String) value;
+                case "totalPrice" -> this.totalPrice = (Double) value;
+                case "purchaseDate" -> this.purchaseDate = (String) value;
+                case "quantity" -> this.quantity = (Integer) value;
+            }
+        });
     }
 
     public boolean matches(Map<String, Object> queryMap) {
-        return queryMap.keySet().stream()
-                .allMatch(key -> {
-                    switch (key) {
-                        case "id" -> {
-                            if (!queryMap.get(key).equals(id)) {
-                                return false;
-                            }
-                        }
-                        case "customerName" -> {
-                            if (!queryMap.get(key).equals(customerName)) {
-                                return false;
-                            }
-                        }
-                        case "itemName" -> {
-                            if (!queryMap.get(key).equals(itemName)) {
-                                return false;
-                            }
-                        }
-                        case "totalPrice" -> {
-                            if (!(queryMap.get(key) instanceof Double) || !compareDoubles((double) queryMap.get(key), totalPrice)){
-                                return false;
-                            }
-                        }
-                        case "purchaseDate" -> {
-                            if (!queryMap.get(key).equals(purchaseDate)) {
-                                return false;
-                            }
-                        }
-                        case "quantity" -> {
-                            if (!queryMap.get(key).equals(quantity)) {
-                                return false;
-                            }
-                        }
-                        default -> {
-                            return false;
-                        }
-                    }
-                    return true;
+        return queryMap.entrySet().stream()
+                .allMatch(entry -> {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+
+                    return switch (key) {
+                        case "customerName" -> customerName.equals(value);
+                        case "itemName" -> itemName.equals(value);
+                        case "totalPrice" -> value instanceof Double && DataEntity.compareDoubles(totalPrice, (Double) value);
+                        case "purchaseDate" -> purchaseDate.equals(value);
+                        case "quantity" -> quantity.equals(value);
+                        default -> false;
+                    };
                 });
     }
 
@@ -103,26 +70,19 @@ public class CustomerPurchaseEntity extends DataEntity{
         return purchaseDate;
     }
 
-    public static int getIdCounter() {
-        return idCounter;
-    }
-
-    public static void incrementIdCounter() {
-        idCounter++;
-    }
-
     public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public static void printTableHead() {
-        System.out.println("-".repeat(tableHead.length()));
-        System.out.println(tableHead);
-        System.out.println("-".repeat(tableHead.length()));
+    public String getId() {
+        return id;
     }
 
-    @Override
+    public static void printTableHead() {
+        DataEntity.printTableHead(tableHead);
+    }
+
     public void printTableRow() {
-        System.out.printf(columnWidth + "\n", customerName, itemName, quantity, totalPrice, purchaseDate);
+        System.out.printf(columnWidth + "\n", id, customerName, itemName, quantity, totalPrice, purchaseDate);
     }
 }
