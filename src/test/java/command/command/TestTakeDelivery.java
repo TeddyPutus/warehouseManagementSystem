@@ -28,6 +28,10 @@ public class TestTakeDelivery {
 
     @BeforeClass
     public static void classSetUp() {
+        FindStockOrders.supplierPurchaseRepository.deleteMany(Map.of());
+        FindStockOrders.inventoryRepository.deleteMany(Map.of());
+        FindStockOrders.financialRepository.deleteMany(Map.of());
+
         FindStockOrders.supplierPurchaseRepository.create(supplierPurchaseEntity);
         FindStockOrders.inventoryRepository.create(inventoryEntity);
         FindStockOrders.financialRepository.create(financialEntity);

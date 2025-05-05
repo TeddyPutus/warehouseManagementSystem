@@ -23,6 +23,8 @@ public class TestRegisterItem {
 
     @BeforeClass
     public static void classSetUp() {
+        RegisterItem.inventoryRepository.deleteMany(Map.of());
+        RegisterItem.financialRepository.deleteMany(Map.of());
         RegisterItem.inventoryRepository.create(entity1);
     }
 
