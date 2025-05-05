@@ -1,8 +1,6 @@
 package putus.teddy.command.registry;
 
-import putus.teddy.command.command.Command;
-import putus.teddy.command.command.Exit;
-import putus.teddy.command.command.Help;
+import putus.teddy.command.command.*;
 import putus.teddy.command.parser.CommandType;
 
 import java.util.EnumMap;
@@ -11,10 +9,17 @@ public class CommandRegistry {
     private final EnumMap<CommandType, Command> commandHandlers = new EnumMap<>(CommandType.class);
 
     public CommandRegistry() {
-
         commandHandlers.put(CommandType.HELP, new Help());
         commandHandlers.put(CommandType.EXIT, new Exit());
+        commandHandlers.put(CommandType.ORDER_STOCK, new OrderStock());
+        commandHandlers.put(CommandType.TAKE_DELIVERY, new TakeDelivery());
+        commandHandlers.put(CommandType.CUSTOMER_ORDER, new CustomerOrder());
+        commandHandlers.put(CommandType.REGISTER, new Register());
+        commandHandlers.put(CommandType.FIND, new Find());
+        commandHandlers.put(CommandType.FINANCIAL_REPORT, new GenerateReport());
+        commandHandlers.put(CommandType.UPDATE_SUPPLIER_INFO, new UpdateSupplier());
     }
+
 
     public boolean processCommand(CommandType command){
         Command handler = commandHandlers.get(command);
