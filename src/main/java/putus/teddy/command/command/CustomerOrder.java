@@ -13,27 +13,37 @@ public class CustomerOrder implements Command {
         System.out.println("Taking customer order...");
         CustomerPurchaseEntity newOrder;
 
-        try{
-            newOrder = buildCustomerPurchaseEntity();
+        newOrder = EntityBuilder.buildCustomerPurchaseEntity();
+
+        try {
+            validateOrder(newOrder);
+            setTotalPrice(newOrder);
+            updateFinancialEntity(newOrder);
         } catch (Exception e) {
-            System.out.println("An error occurred while processing the order: " + e.getMessage());
+            System.out.println(e.getMessage());
             return false;
         }
 
-        if (validateOrder(newOrder) && updateFinancialEntity(newOrder)) {
-            customerPurchaseRepository.create(newOrder);
-            System.out.println("Order placed successfully. Order ID is " + newOrder.getId());
-        } else {
-            System.out.println("Financial entity not found for item: " + newOrder.getItemName());
-        }
+        customerPurchaseRepository.create(newOrder);
+        System.out.println("Order placed successfully. Order ID is " + newOrder.getId());
         return false;
     }
 
-    private boolean updateFinancialEntity(CustomerPurchaseEntity newOrder){
+    private void setTotalPrice(CustomerPurchaseEntity newOrder) throws Exception {
+        try{
+            newOrder.setTotalPrice(
+                    newOrder.getQuantity() * inventoryRepository.findOne(Map.of("itemName", newOrder.getItemName())).getPricePerUnit()
+            );
+        } catch (Exception e) {
+            throw new Exception("Error generating order: " + e.getMessage());
+        }
+    }
+
+    private void updateFinancialEntity(CustomerPurchaseEntity newOrder) throws Exception {
         FinancialEntity financialEntity = financialRepository.findOne(Map.of("itemName", newOrder.getItemName()));
 
         if (financialEntity == null) {
-            return false;
+            throw new Exception("Financial entity not found for item: " + newOrder.getItemName());
         }
 
         financialEntity.setTotalRevenue(
@@ -43,28 +53,17 @@ public class CustomerOrder implements Command {
         financialEntity.setQuantitySold(
                 financialEntity.getQuantitySold() + newOrder.getQuantity()
         );
-        return true;
     }
 
-    private CustomerPurchaseEntity buildCustomerPurchaseEntity() {
-        CustomerPurchaseEntity newOrder = EntityBuilder.buildCustomerPurchaseEntity();
-
-        newOrder.setTotalPrice(
-                newOrder.getQuantity() * inventoryRepository.findOne(Map.of("itemName", newOrder.getItemName())).getPricePerUnit()
-        );
-
-        return newOrder;
+    private void validateOrder(CustomerPurchaseEntity newOrder) throws Exception {
+        validateItem(newOrder.getItemName());
+        updateStockLevel(newOrder.getItemName(), newOrder.getQuantity());
     }
 
-    private boolean validateOrder(CustomerPurchaseEntity newOrder) {
-        return validateItem(newOrder.getItemName()) && updateStockLevel(newOrder.getItemName(), newOrder.getQuantity());
-    }
-
-    private boolean updateStockLevel(String itemName, int quantity) {
+    private void updateStockLevel(String itemName, int quantity) throws Exception {
         InventoryEntity inventoryEntity = inventoryRepository.findOne(Map.of("itemName", itemName));
         if (inventoryEntity.getQuantity() < quantity) {
-            System.out.println("Not enough stock available. Please order more stock.");
-            return false;
+            throw new Exception("Not enough stock available. Please order more stock.");
         }
 
         inventoryEntity.setQuantity(inventoryEntity.getQuantity() - quantity);
@@ -74,18 +73,15 @@ public class CustomerOrder implements Command {
             printAlert("Stock for " + itemName + " is low. Please order more stock.");
         }
 
-        return true;
     }
 
     private void printAlert(String message){
         System.out.println("!!! ALERT: " + message + " !!!");
     }
 
-    private boolean validateItem(String itemName) {
-        boolean exists =  inventoryRepository.findOne(Map.of("itemName", itemName)) != null;
-        if (!exists) {
-            System.out.println("Item does not exist. Please register item first.");
+    private void validateItem(String itemName) throws Exception {
+        if (inventoryRepository.findOne(Map.of("itemName", itemName)) == null) {
+            throw new Exception("Item does not exist. Please register item first.");
         }
-        return exists;
     }
 }
