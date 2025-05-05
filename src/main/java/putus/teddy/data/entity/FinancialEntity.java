@@ -78,4 +78,17 @@ public class FinancialEntity extends DataEntity {
     public int getQuantitySold() {
         return quantitySold;
     }
+
+    public void setTotalRevenue(double totalRevenue) {
+        this.totalRevenue = totalRevenue;
+    }
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
+    }
+    public void setQuantityPurchased(int quantityPurchased) {
+        this.quantityPurchased = quantityPurchased;
+    }
+    public void setQuantitySold(int quantitySold) {
+        this.quantitySold = quantitySold;
+    }
 }
