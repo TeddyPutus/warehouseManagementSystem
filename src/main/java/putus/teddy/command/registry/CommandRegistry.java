@@ -14,8 +14,11 @@ public class CommandRegistry {
         commandHandlers.put(CommandType.ORDER_STOCK, new OrderStock());
         commandHandlers.put(CommandType.TAKE_DELIVERY, new TakeDelivery());
         commandHandlers.put(CommandType.CUSTOMER_ORDER, new CustomerOrder());
-        commandHandlers.put(CommandType.REGISTER, new Register());
-        commandHandlers.put(CommandType.FIND, new Find());
+        commandHandlers.put(CommandType.REGISTER_SUPPLIER, new RegisterSupplier());
+        commandHandlers.put(CommandType.REGISTER_ITEM, new RegisterItem());
+        commandHandlers.put(CommandType.FIND_ORDERS, new FindOrders());
+        commandHandlers.put(CommandType.FIND_INVENTORY, new FindInventory());
+        commandHandlers.put(CommandType.FIND_SUPPLIERS, new FindSuppliers());
         commandHandlers.put(CommandType.FINANCIAL_REPORT, new GenerateReport());
         commandHandlers.put(CommandType.UPDATE_SUPPLIER_INFO, new UpdateSupplier());
     }
