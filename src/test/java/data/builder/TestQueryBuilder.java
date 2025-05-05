@@ -39,7 +39,7 @@ public class TestQueryBuilder {
             utilities.when(() -> InputParser.parseInt(anyString(), anyBoolean())).thenReturn(5);
 
             var query = QueryBuilder.inventoryQuery();
-            assertEquals("Test String", query.get("itemName"));
+            assertEquals("Test String", query.get("name"));
             assertEquals(5, query.get("quantity"));
             assertEquals(10.0, query.get("price"));
         }
