@@ -55,6 +55,10 @@ public class SupplierEntity extends DataEntity {
         return email;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public static void printTableHead() {
         DataEntity.printTableHead(tableHead);
     }
