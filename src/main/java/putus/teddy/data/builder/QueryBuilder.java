@@ -11,7 +11,7 @@ public class QueryBuilder {
     public static Map<String, Object> supplierQuery() {
         return filterQuery(Map.of(
                 "name", InputParser.parseString("name", false),
-                "contactNumber", InputParser.parseString("phone number", false),
+                "phoneNumber", InputParser.parseString("phone number", false),
                 "email", InputParser.parseString("email", false)
         ));
     }
