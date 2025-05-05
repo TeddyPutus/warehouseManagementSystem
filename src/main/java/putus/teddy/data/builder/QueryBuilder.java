@@ -9,94 +9,55 @@ import java.util.Scanner;
 
 public class QueryBuilder {
     public static Map<String, Object> supplierQuery() {
-        String name = InputParser.parseString("name", false);
-        String phoneNumber = InputParser.parseString("phone number", false);
-        String email = InputParser.parseString("email", false);
-
-        HashMap<String, Object> query = new HashMap<>();
-
-        if (!name.isEmpty()) {
-            query.put("name", name);
-        }
-        if (!phoneNumber.isEmpty()) {
-            query.put("phoneNumber", phoneNumber);
-        }
-        if (!email.isEmpty()) {
-            query.put("email", email);
-        }
-
-        return query;
+        return filterQuery(Map.of(
+                "name", InputParser.parseString("name", false),
+                "contactNumber", InputParser.parseString("phone number", false),
+                "email", InputParser.parseString("email", false)
+        ));
     }
 
     public static Map<String, Object> inventoryQuery() {
-        String name = InputParser.parseString("name", false);
-        int quantity = InputParser.parseInt("quantity", false);
-        double price = InputParser.parseDouble("price", false);
-
-        HashMap<String, Object> query = new HashMap<>();
-
-        if (!name.isEmpty()) {
-            query.put("itemName", name);
-        }
-        if (quantity != -1) {
-            query.put("quantity", quantity);
-        }
-        if (price > 0) {
-            query.put("price", price);
-        }
-
-        return query;
+        return filterQuery(Map.of(
+                "name", InputParser.parseString("name", false),
+                "quantity", InputParser.parseInt("quantity", false),
+                "price", InputParser.parseDouble("price", false)
+        ));
     }
 
     public static Map<String, Object> customerOrderQuery() {
-        String name = InputParser.parseString("name", false);
-        String itemName = InputParser.parseString("item name", false);
-        int quantity = InputParser.parseInt("quantity", true);
-        String date = InputParser.parseString("date", false);
-
-        HashMap<String, Object> query = new HashMap<>();
-
-        if (!name.isEmpty()) {
-            query.put("customerName", name);
-        }
-        if (!itemName.isEmpty()) {
-            query.put("itemName", itemName);
-        }
-        if (quantity != -1) {
-            query.put("quantity", quantity);
-        }
-        if (!date.isEmpty()) {
-            query.put("date", date);
-        }
-
-        return query;
+        return filterQuery(Map.of(
+                "customerName", InputParser.parseString("name", false),
+                "itemName", InputParser.parseString("item name", false),
+                "quantity", InputParser.parseInt("quantity", false),
+                "date", InputParser.parseString("date", false)
+        ));
     }
 
     public static Map<String, Object> supplierPurchaseQuery() {
-        String supplierName = InputParser.parseString("supplier name", false);
-        String itemName = InputParser.parseString("item name", false);
-        int quantity = InputParser.parseInt("quantity", false);
-        double price = InputParser.parseDouble("price", false);
-        String date = InputParser.parseString("date", false);
+        return filterQuery(Map.of(
+                "supplierName", InputParser.parseString("supplier name", false),
+                "itemName", InputParser.parseString("item name", false),
+                "quantity", InputParser.parseInt("quantity", false),
+                "price", InputParser.parseDouble("price", false),
+                "date", InputParser.parseString("date", false)
+        ));
+    }
 
-        HashMap<String, Object> query = new HashMap<>();
+    private static Map<String, Object> filterQuery(Map<String, Object> query){
+        Map<String, Object> filteredQuery = new HashMap<>(query);
 
-        if (!supplierName.isEmpty()) {
-            query.put("supplierName", supplierName);
-        }
-        if (!itemName.isEmpty()) {
-            query.put("itemName", itemName);
-        }
-        if (quantity != -1) {
-            query.put("quantity", quantity);
-        }
-        if (price > 0) {
-            query.put("price", price);
-        }
-        if (!date.isEmpty()) {
-            query.put("date", date);
-        }
+        filteredQuery.entrySet().removeIf(entry -> {
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                return ((String) value).isEmpty();
+            } else if (value instanceof Number) {
+                return ((Number) value).doubleValue() < 0;
+            }
+            return false;
+        });
 
-        return query;
+
+        return filteredQuery;
     }
 }
+
