@@ -25,6 +25,7 @@ public class TestFindInventory {
 
     @BeforeClass
     public static void classSetUp() {
+        FindInventory.inventoryRepository.deleteMany(Map.of());
         FindInventory.inventoryRepository.create(inventoryEntity1);
         FindInventory.inventoryRepository.create(inventoryEntity2);
         FindInventory.inventoryRepository.create(inventoryEntity3);

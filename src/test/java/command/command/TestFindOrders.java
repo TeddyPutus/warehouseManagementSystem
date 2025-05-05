@@ -26,6 +26,7 @@ public class TestFindOrders {
 
     @BeforeClass
     public static void classSetUp() {
+        FindInventory.customerPurchaseRepository.deleteMany(Map.of());
         FindInventory.customerPurchaseRepository.create(entity1);
         FindInventory.customerPurchaseRepository.create(entity2);
         FindInventory.customerPurchaseRepository.create(entity3);

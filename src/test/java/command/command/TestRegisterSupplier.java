@@ -23,6 +23,7 @@ public class TestRegisterSupplier {
 
     @BeforeClass
     public static void classSetUp() {
+        RegisterSupplier.supplierRepository.deleteMany(Map.of());
         RegisterSupplier.supplierRepository.create(entity1);
     }
 

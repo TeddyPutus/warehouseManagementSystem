@@ -5,11 +5,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import putus.teddy.command.command.FindInventory;
 import putus.teddy.command.command.GenerateReport;
-import putus.teddy.data.entity.CustomerPurchaseEntity;
 import putus.teddy.data.entity.FinancialEntity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
@@ -23,6 +23,7 @@ public class TestGenerateReport {
 
     @BeforeClass
     public static void classSetUp() {
+        FindInventory.financialRepository.deleteMany(Map.of());
         FindInventory.financialRepository.create(entity1);
         FindInventory.financialRepository.create(entity2);
         FindInventory.financialRepository.create(entity3);
