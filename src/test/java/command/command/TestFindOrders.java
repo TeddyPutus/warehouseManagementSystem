@@ -1,5 +1,6 @@
 package command.command;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -8,6 +9,7 @@ import putus.teddy.command.command.FindInventory;
 import putus.teddy.command.command.FindOrders;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.CustomerPurchaseEntity;
+import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -17,7 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TestFindOrders {
-    ByteArrayOutputStream outContent;
+    static ByteArrayOutputStream outContent;
     FindOrders command = new FindOrders();
 
     static CustomerPurchaseEntity entity1 = new CustomerPurchaseEntity("customer1", "item1", 10, "2025-01-01");
@@ -30,12 +32,14 @@ public class TestFindOrders {
         FindInventory.customerPurchaseRepository.create(entity1);
         FindInventory.customerPurchaseRepository.create(entity2);
         FindInventory.customerPurchaseRepository.create(entity3);
+
+        outContent = new ByteArrayOutputStream();
+        Printer.setOutputStream(new PrintStream(outContent));
     }
 
     @Before
     public void testSetUp() {
-        outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        outContent.reset();
     }
 
     @Test
@@ -48,13 +52,9 @@ public class TestFindOrders {
 
             command.execute();
 
-            String header = "------------------------------------------------------------------------------------------------------------------------------------\n" +
-                    "| ID                                   | CUSTOMER NAME   | PURCHASED ITEM       |    QUANTITY | TOTAL PRICE | PURCHASE DATE        |\n" +
-                    "------------------------------------------------------------------------------------------------------------------------------------" ;
-
             String output = outContent.toString();
 
-            assertTrue(output.contains(header));
+            assertTrue(output.contains(CustomerPurchaseEntity.getTableHead()));
             assertTrue(output.contains(entity1.getCustomerName()));
             assertTrue(output.contains(entity3.getCustomerName()));
 

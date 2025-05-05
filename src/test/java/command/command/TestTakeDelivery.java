@@ -1,5 +1,6 @@
 package command.command;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
 import putus.teddy.data.entity.SupplierPurchaseEntity;
 import putus.teddy.data.parser.InputParser;
+import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -19,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestTakeDelivery {
-    ByteArrayOutputStream outContent;
+    static ByteArrayOutputStream outContent;
     TakeDelivery command = new TakeDelivery();
 
     static SupplierPurchaseEntity supplierPurchaseEntity = new SupplierPurchaseEntity("Supplier A", "2025-01-01", "item1", 10, 1.0);
@@ -35,12 +37,13 @@ public class TestTakeDelivery {
         FindStockOrders.supplierPurchaseRepository.create(supplierPurchaseEntity);
         FindStockOrders.inventoryRepository.create(inventoryEntity);
         FindStockOrders.financialRepository.create(financialEntity);
+        outContent = new ByteArrayOutputStream();
+        Printer.setOutputStream(new PrintStream(outContent));
     }
 
     @Before
     public void testSetUp() {
-        outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        outContent.reset();
         supplierPurchaseEntity.setStatus(SupplierPurchaseEntity.Status.PENDING);
         supplierPurchaseEntity.update(Map.of("itemName", "item1"));
         financialEntity.update(Map.of("itemName", "item1"));

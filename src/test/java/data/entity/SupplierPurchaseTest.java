@@ -43,25 +43,15 @@ public class SupplierPurchaseTest {
 
     @Test
     public void testPrintTableHead() {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
 
-        SupplierPurchaseEntity.printTableHead();
-
-        String expectedOutput = "---------------------------------------------------------------------------------------------------------------------------------\n" +
-                "| ID                                   | SUPPLIER    | DATE        | ITEM NAME            | QUANTITY | PRICE/UNIT | TOTAL PRICE |\n" +
-                "---------------------------------------------------------------------------------------------------------------------------------\n";
-        assertEquals(expectedOutput, outContent.toString());
+        String expectedOutput = "| ID                                   | SUPPLIER    | DATE        | ITEM NAME            | QUANTITY | PRICE/UNIT | TOTAL PRICE |";
+        assertEquals(expectedOutput, SupplierPurchaseEntity.getTableHead());
     }
 
     @Test
     public void testPrintTableRow() {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-
-        supplierPurchase.printTableRow();
 
         String expectedOutput = "| Test Supplier | 2025-01-01  | item1                |       10 |      100.0 |      1000.0 |\n";
-        assertTrue(outContent.toString().contains(expectedOutput));
+        assertTrue(supplierPurchase.getTableRow().contains(expectedOutput));
     }
 }

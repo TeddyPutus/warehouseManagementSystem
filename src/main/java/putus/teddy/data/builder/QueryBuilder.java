@@ -1,45 +1,43 @@
 package putus.teddy.data.builder;
 
-import putus.teddy.command.parser.CommandParser;
-import putus.teddy.data.parser.InputParser;
+import putus.teddy.data.parser.ValidatedInputParser;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class QueryBuilder {
     public static Map<String, Object> supplierQuery() {
         return filterQuery(Map.of(
-                "name", InputParser.parseString("name", false),
-                "phoneNumber", InputParser.parseString("phone number", false),
-                "email", InputParser.parseString("email", false)
+                "name", ValidatedInputParser.parseString("name", false, 1,15),
+                "phoneNumber", ValidatedInputParser.parseString("phone number", false,1,12),
+                "email", ValidatedInputParser.parseString("email", false,1,20)
         ));
     }
 
     public static Map<String, Object> inventoryQuery() {
         return filterQuery(Map.of(
-                "name", InputParser.parseString("name", false),
-                "quantity", InputParser.parseInt("quantity", false),
-                "price", InputParser.parseDouble("price", false)
+                "name", ValidatedInputParser.parseString("name", false,1,15),
+                "quantity", ValidatedInputParser.parseQuantity("quantity", false),
+                "price", ValidatedInputParser.parseAmount("price", false)
         ));
     }
 
     public static Map<String, Object> customerOrderQuery() {
         return filterQuery(Map.of(
-                "customerName", InputParser.parseString("name", false),
-                "itemName", InputParser.parseString("item name", false),
-                "quantity", InputParser.parseInt("quantity", false),
-                "date", InputParser.parseString("date", false)
+                "customerName", ValidatedInputParser.parseString("name", false,1,15),
+                "itemName", ValidatedInputParser.parseString("item name", false,1,15),
+                "quantity", ValidatedInputParser.parseQuantity("quantity", false),
+                "date", ValidatedInputParser.parseString("date", false,1,10)
         ));
     }
 
     public static Map<String, Object> supplierPurchaseQuery() {
         return filterQuery(Map.of(
-                "supplierName", InputParser.parseString("supplier name", false),
-                "itemName", InputParser.parseString("item name", false),
-                "quantity", InputParser.parseInt("quantity", false),
-                "price", InputParser.parseDouble("price", false),
-                "date", InputParser.parseString("date", false)
+                "supplierName", ValidatedInputParser.parseString("supplier name", false,1,15),
+                "itemName", ValidatedInputParser.parseString("item name", false,1,15),
+                "quantity", ValidatedInputParser.parseQuantity("quantity", false),
+                "price", ValidatedInputParser.parseAmount("price", false),
+                "date", ValidatedInputParser.parseString("date", false, 1,10)
         ));
     }
 
@@ -50,8 +48,10 @@ public class QueryBuilder {
             Object value = entry.getValue();
             if (value instanceof String) {
                 return ((String) value).isEmpty();
-            } else if (value instanceof Number) {
-                return ((Number) value).doubleValue() < 0;
+            } else if (value instanceof Double) {
+                return ((Double) value)  == Double.MIN_VALUE;
+            }else if (value instanceof Integer) {
+                return ((Integer) value) == Integer.MIN_VALUE;
             }
             return false;
         });

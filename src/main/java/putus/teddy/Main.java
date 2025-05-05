@@ -2,10 +2,9 @@ package putus.teddy;
 
 import putus.teddy.command.command.Command;
 import putus.teddy.command.parser.CommandParser;
-import putus.teddy.command.parser.CommandType;
+import putus.teddy.printer.Printer;
 import putus.teddy.data.entity.*;
 import putus.teddy.command.registry.CommandRegistry;
-import putus.teddy.data.repository.InMemoryRepository;
 
 import java.util.List;
 
@@ -18,8 +17,10 @@ public class Main {
 
         boolean finished = false;
 
-        System.out.println("Welcome to BNU Industries!");
-        System.out.println("Type help to see the list of commands.");
+        Printer.logo();
+
+        Printer.success("Welcome to BNU Industries!");
+        Printer.success("Type help to see the list of commands.");
 
         while (!finished) {
             finished = commandRegistry.processCommand(CommandParser.parseCommand());

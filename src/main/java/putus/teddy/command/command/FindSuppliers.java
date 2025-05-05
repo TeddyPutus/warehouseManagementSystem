@@ -1,20 +1,18 @@
 package putus.teddy.command.command;
 
 import putus.teddy.data.builder.QueryBuilder;
+import putus.teddy.data.entity.DataEntity;
 import putus.teddy.data.entity.SupplierEntity;
-import putus.teddy.data.repository.InMemoryRepository;
-
-import java.util.Map;
-import java.util.stream.Stream;
+import putus.teddy.printer.Printer;
 
 public class FindSuppliers implements Command {
      public boolean execute() {
-         System.out.println("Finding Suppliers, please enter optional filter values...");
+         Printer.info("Finding Suppliers, please enter optional filter values...");
 
-         Stream<SupplierEntity> supplierStream = supplierRepository.findMany(QueryBuilder.supplierQuery());
-
-         SupplierEntity.printTableHead();
-         supplierStream.forEach(SupplierEntity::printTableRow);
+         Printer.printTable(
+                 supplierRepository.findMany(QueryBuilder.supplierQuery()).map(entity -> (DataEntity) entity),
+                 SupplierEntity.getTableHead()
+         );
 
          return false;
      }

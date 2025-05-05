@@ -3,12 +3,12 @@ package putus.teddy.data.entity;
 import java.util.Map;
 import java.util.UUID;
 
-public class SupplierEntity extends DataEntity {
+public class SupplierEntity implements DataEntity {
     private final String id = UUID.randomUUID().toString();
     private String name;
     private String phoneNumber;
     private String email;
-    private static final String columnWidth = "| %-36s | %-10s | %12s | %-20s |";
+    private static final String columnWidth = "| %-36s | %-15s | %12s | %-20s |";
     private static final String tableHead = String.format(columnWidth, "ID", "NAME", "PHONE", "EMAIL");
 
     public SupplierEntity(String name, String phoneNumber, String email) {
@@ -59,11 +59,10 @@ public class SupplierEntity extends DataEntity {
         return id;
     }
 
-    public static void printTableHead() {
-        DataEntity.printTableHead(tableHead);
+    public static String getTableHead() {
+        return tableHead;
     }
-
-    public void printTableRow() {
-        System.out.printf(columnWidth + "\n", id, name, phoneNumber, email);
+    public String getTableRow() {
+        return String.format(columnWidth + "\n", id, name, phoneNumber, email);
     }
 }

@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import putus.teddy.command.parser.CommandParser;
 import putus.teddy.command.parser.CommandType;
+import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -15,21 +16,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TestCommandParser {
-    ByteArrayOutputStream outContent;
+    static ByteArrayOutputStream outContent;
     static Scanner scannerMock = mock(Scanner.class);
 
     @BeforeClass
     public static void setUpClass() {
         CommandParser.setScanner(scannerMock);
-    }
-
-
-    @Before
-    public void setUp() {
         outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        Printer.setOutputStream(new PrintStream(outContent));
     }
-
 
     @Test
     public void testParseCommand() {
@@ -49,7 +44,7 @@ public class TestCommandParser {
 
         CommandType actualType = CommandParser.parseCommand();
 
-        String expectedOutput = "Invalid command. Please try again.\n";
+        String expectedOutput = "Invalid command. Please try again.";
         assertTrue(outContent.toString().contains(expectedOutput));
 
         assertEquals(expectedType, actualType);
@@ -74,7 +69,7 @@ public class TestCommandParser {
 
         assertEquals(expectedType, actualType);
 
-        String expectedOutput = "Invalid command. Please try again.\n";
+        String expectedOutput = "Invalid command. Please try again.";
         assertTrue(outContent.toString().contains(expectedOutput));
     }
 }

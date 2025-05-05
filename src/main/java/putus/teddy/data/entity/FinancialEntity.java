@@ -2,7 +2,7 @@ package putus.teddy.data.entity;
 
 import java.util.Map;
 
-public class FinancialEntity extends DataEntity {
+public class FinancialEntity implements DataEntity {
     private String itemName;
     private Integer quantityPurchased;
     private Integer quantitySold;
@@ -58,12 +58,12 @@ public class FinancialEntity extends DataEntity {
         calculateProfit();
     }
 
-    public static void printTableHead() {
-        DataEntity.printTableHead(tableHead);
+    public static String getTableHead() {
+        return tableHead;
     }
 
-    public void printTableRow() {
-        System.out.printf(columnWidth + "\n", itemName, quantityPurchased, quantitySold, totalCost, totalRevenue, profit);
+    public String getTableRow() {
+        return String.format(columnWidth + "\n", itemName, quantityPurchased, quantitySold, totalCost, totalRevenue, profit);
     }
 
     public double getTotalRevenue() {
@@ -87,6 +87,7 @@ public class FinancialEntity extends DataEntity {
     }
     public void setTotalCost(double totalCost) {
         this.totalCost = totalCost;
+        calculateProfit();
     }
     public void setQuantityPurchased(int quantityPurchased) {
         this.quantityPurchased = quantityPurchased;

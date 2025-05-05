@@ -49,25 +49,13 @@ public class FinancialEntityTest {
 
     @Test
     public void testPrintTableHead() {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-
-        FinancialEntity.printTableHead();
-
-        String expectedOutput = "--------------------------------------------------------------------------------------------------\n" +
-                "| ITEM NAME       | PURCHASED            |        SOLD |   OUTGOINGS |     REVENUE |      PROFIT |\n" +
-                "--------------------------------------------------------------------------------------------------\n";
-        assertEquals(expectedOutput, outContent.toString());
+        String expectedOutput = "| ITEM NAME       | PURCHASED            |        SOLD |   OUTGOINGS |     REVENUE |      PROFIT |";
+        assertEquals(expectedOutput, FinancialEntity.getTableHead());
     }
 
     @Test
     public void testPrintTableRow() {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-
-        financialEntity.printTableRow();
-
         String expectedOutput = "| Test Entity     | 10                   |           2 |      1000.0 |       500.0 |      -500.0 |\n";
-        assertEquals(expectedOutput, outContent.toString());
+        assertEquals(expectedOutput, financialEntity.getTableRow());
     }
 }

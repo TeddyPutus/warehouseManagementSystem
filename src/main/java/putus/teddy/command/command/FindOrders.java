@@ -2,19 +2,18 @@ package putus.teddy.command.command;
 
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.CustomerPurchaseEntity;
-import putus.teddy.data.repository.InMemoryRepository;
-
-import java.util.Map;
-import java.util.stream.Stream;
+import putus.teddy.data.entity.DataEntity;
+import putus.teddy.printer.Printer;
 
 public class FindOrders implements Command{
     public boolean execute() {
-        System.out.println("Finding Customer Orders, please enter optional filter values...");
+        Printer.info("Finding Customer Orders, please enter optional filter values...");
 
-        Stream<CustomerPurchaseEntity> customerPurchaseStream = customerPurchaseRepository.findMany(QueryBuilder.customerOrderQuery());
+        Printer.printTable(
+                customerPurchaseRepository.findMany(QueryBuilder.customerOrderQuery()).map(entity -> (DataEntity) entity),
+                CustomerPurchaseEntity.getTableHead()
+        );
 
-        CustomerPurchaseEntity.printTableHead();
-        customerPurchaseStream.forEach(CustomerPurchaseEntity::printTableRow);
         return false;
     }
 }

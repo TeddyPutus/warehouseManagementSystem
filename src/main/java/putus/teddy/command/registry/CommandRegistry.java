@@ -2,6 +2,7 @@ package putus.teddy.command.registry;
 
 import putus.teddy.command.command.*;
 import putus.teddy.command.parser.CommandType;
+import putus.teddy.printer.Printer;
 
 import java.util.EnumMap;
 
@@ -18,6 +19,7 @@ public class CommandRegistry {
         commandHandlers.put(CommandType.REGISTER_ITEM, new RegisterItem());
         commandHandlers.put(CommandType.FIND_ORDERS, new FindOrders());
         commandHandlers.put(CommandType.FIND_INVENTORY, new FindInventory());
+        commandHandlers.put(CommandType.FIND_STOCK_ORDERS, new FindStockOrders());
         commandHandlers.put(CommandType.FIND_SUPPLIERS, new FindSuppliers());
         commandHandlers.put(CommandType.FINANCIAL_REPORT, new GenerateReport());
         commandHandlers.put(CommandType.UPDATE_SUPPLIER_INFO, new UpdateSupplier());
@@ -25,11 +27,11 @@ public class CommandRegistry {
 
 
     public boolean processCommand(CommandType command){
-        Command handler = commandHandlers.get(command);
+        Command handler = commandHandlers.getOrDefault(command, commandHandlers.get(CommandType.HELP));
         if (handler != null) {
             return handler.execute();
         } else {
-            System.out.println("Unimplemented command: " + command);
+            Printer.error("Unimplemented command: " + command);
         }
         return false;
     }

@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import putus.teddy.data.parser.InputParser;
+import putus.teddy.printer.Printer;
 
 
 import java.io.ByteArrayOutputStream;
@@ -15,18 +16,14 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class TestInputParser {
-    ByteArrayOutputStream outContent;
+    static ByteArrayOutputStream outContent;
     static Scanner scannerMock = mock(Scanner.class);
 
     @BeforeClass
     public static void setUpClass() {
         InputParser.setScanner(scannerMock);
-    }
-
-    @Before
-    public void setUp() {
         outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        Printer.setOutputStream(new PrintStream(outContent));
     }
 
     @Test
@@ -46,7 +43,7 @@ public class TestInputParser {
         Double expectedValue = 20.5;
         Double actualValue = InputParser.parseDouble("Test Field", true);
 
-        String expectedOutput = "Invalid input. Please enter a valid double value.\n";
+        String expectedOutput = "Invalid input. Please enter a valid double value.";
         assertTrue(outContent.toString().contains(expectedOutput));
 
         assertEquals(expectedValue, actualValue);
@@ -59,7 +56,7 @@ public class TestInputParser {
         Double expectedValue = 15.0;
         Double actualValue = InputParser.parseDouble( "Test Field", true);
 
-        String expectedOutput = "Test Field is required. Please enter a value.\n";
+        String expectedOutput = "Test Field is required. Please enter a value.";
         assertTrue(outContent.toString().contains(expectedOutput));
 
         assertEquals(expectedValue, actualValue);
@@ -69,7 +66,7 @@ public class TestInputParser {
     public void testParseDoubleEmptyInputWhenInputNotRequired() {
         when(scannerMock.nextLine()).thenReturn("");
 
-        Double expectedValue = -1.0;
+        Double expectedValue = Double.MIN_VALUE;
         Double actualValue = InputParser.parseDouble("Test Field", false);
 
         assertEquals(expectedValue, actualValue);
@@ -93,7 +90,7 @@ public class TestInputParser {
         int expectedValue = 20;
         int actualValue = InputParser.parseInt("Test Field", true);
 
-        String expectedOutput = "Invalid input. Please enter a valid integer value.\n";
+        String expectedOutput = "Invalid input. Please enter a valid integer value.";
         assertTrue(outContent.toString().contains(expectedOutput));
 
         assertEquals(expectedValue, actualValue);
@@ -106,7 +103,7 @@ public class TestInputParser {
         int expectedValue = 15;
         int actualValue = InputParser.parseInt("Test Field", true);
 
-        String expectedOutput = "Test Field is required. Please enter a value.\n";
+        String expectedOutput = "Test Field is required. Please enter a value.";
         assertTrue(outContent.toString().contains(expectedOutput));
 
         assertEquals(expectedValue, actualValue);
@@ -116,7 +113,7 @@ public class TestInputParser {
     public void testParseIntEmptyInputWhenInputNotRequired() {
         when(scannerMock.nextLine()).thenReturn("");
 
-        int expectedValue = -1;
+        int expectedValue = Integer.MIN_VALUE;
         int actualValue = InputParser.parseInt("Test Field", false);
 
         assertEquals(expectedValue, actualValue);
@@ -139,7 +136,7 @@ public class TestInputParser {
 
         String actualValue = InputParser.parseString( "Test Field", true);
 
-        String expectedOutput = "Test Field is required. Please enter a value.\n";
+        String expectedOutput = "Test Field is required. Please enter a value.";
         assertTrue(outContent.toString().contains(expectedOutput));
 
         assertEquals(expectedValue, actualValue);

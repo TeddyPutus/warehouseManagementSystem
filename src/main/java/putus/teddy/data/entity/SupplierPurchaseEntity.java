@@ -3,7 +3,7 @@ package putus.teddy.data.entity;
 import java.util.Map;
 import java.util.UUID;
 
-public class SupplierPurchaseEntity extends DataEntity {
+public class SupplierPurchaseEntity implements DataEntity {
     public enum Status {
         PENDING,
         DELIVERED,
@@ -65,12 +65,12 @@ public class SupplierPurchaseEntity extends DataEntity {
                 });
     }
 
-    public static void printTableHead() {
-        DataEntity.printTableHead(tableHead);
+    public static String getTableHead() {
+        return tableHead;
     }
 
-    public void printTableRow() {
-        System.out.printf(columnWidth + "\n", id, supplierName, purchaseDate, itemName, quantity, pricePerUnit, totalPrice);
+    public String getTableRow() {
+        return String.format(columnWidth + "\n", id, supplierName, purchaseDate, itemName, quantity, pricePerUnit, totalPrice);
     }
 
     public String getId() {

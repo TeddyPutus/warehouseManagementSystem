@@ -1,5 +1,6 @@
 package command.command;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -8,6 +9,7 @@ import putus.teddy.command.command.FindInventory;
 import putus.teddy.command.command.FindSuppliers;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
+import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -17,12 +19,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TestFindSupplier {
-    ByteArrayOutputStream outContent;
+    static ByteArrayOutputStream outContent;
     FindSuppliers findSuppliers = new FindSuppliers();
 
-    static SupplierEntity entity1 = new SupplierEntity("item1", "1234", "email");
-    static SupplierEntity entity2 = new SupplierEntity("item2", "5678", "email2");
-    static SupplierEntity entity3 = new SupplierEntity("item3", "1234", "email3");
+    static SupplierEntity entity1 = new SupplierEntity("supplier1", "1234", "email");
+    static SupplierEntity entity2 = new SupplierEntity("supplier2", "5678", "email2");
+    static SupplierEntity entity3 = new SupplierEntity("supplier3", "1234", "email3");
 
     @BeforeClass
     public static void classSetUp() {
@@ -30,12 +32,8 @@ public class TestFindSupplier {
         FindInventory.supplierRepository.create(entity1);
         FindInventory.supplierRepository.create(entity2);
         FindInventory.supplierRepository.create(entity3);
-    }
-
-    @Before
-    public void testSetUp() {
         outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        Printer.setOutputStream(new PrintStream(outContent));
     }
 
     @Test
@@ -48,18 +46,14 @@ public class TestFindSupplier {
 
             findSuppliers.execute();
 
-            String header = "-------------------------------------------------------------------------------------------\n" +
-                    "| ID                                   | NAME       |        PHONE | EMAIL                |\n" +
-                    "-------------------------------------------------------------------------------------------" ;
-
             String output = outContent.toString();
 
-            assertTrue(output.contains(header));
-            assertTrue(output.contains("item1"));
-            assertTrue(output.contains("item3"));
+            assertTrue(output.contains(SupplierEntity.getTableHead()));
+            assertTrue(output.contains("supplier1"));
+            assertTrue(output.contains("supplier3"));
 
 
-            assertFalse(output.contains("item2"));
+            assertFalse(output.contains("supplier2"));
         }
     }
 
@@ -73,9 +67,9 @@ public class TestFindSupplier {
 
             findSuppliers.execute();
 
-            assertFalse(outContent.toString().contains("item1"));
-            assertFalse(outContent.toString().contains("item2"));
-            assertFalse(outContent.toString().contains("item3"));
+            assertFalse(outContent.toString().contains("supplier1"));
+            assertFalse(outContent.toString().contains("supplier2"));
+            assertFalse(outContent.toString().contains("supplier3"));
         }
     }
 }

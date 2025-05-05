@@ -2,7 +2,7 @@ package putus.teddy.data.entity;
 
 import java.util.Map;
 
-public class InventoryEntity extends DataEntity{
+public class InventoryEntity implements DataEntity{
     private String itemName;
     private Integer quantity;
     private Double pricePerUnit;
@@ -40,12 +40,12 @@ public class InventoryEntity extends DataEntity{
                 });
     }
 
-    public static void printTableHead() {
-        DataEntity.printTableHead(tableHead);
+    public static String getTableHead() {
+        return tableHead;
     }
 
-    public void printTableRow() {
-        System.out.printf(columnWidth + "\n", itemName, quantity, pricePerUnit);
+    public String getTableRow() {
+        return String.format(columnWidth + "\n", itemName, quantity, pricePerUnit);
     }
 
     public String getItemName() {
