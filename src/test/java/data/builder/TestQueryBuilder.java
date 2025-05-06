@@ -42,7 +42,7 @@ public class TestQueryBuilder {
             var query = QueryBuilder.inventoryQuery();
             assertEquals("Test String", query.get("itemName"));
             assertEquals(5, query.get("quantity"));
-            assertEquals(10.0, query.get("price"));
+            assertEquals(10.0, query.get("pricePerUnit"));
         }
     }
 
