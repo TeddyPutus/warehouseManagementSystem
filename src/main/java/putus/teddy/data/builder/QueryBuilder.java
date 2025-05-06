@@ -16,7 +16,7 @@ public class QueryBuilder {
 
     public static Map<String, Object> inventoryQuery() {
         return filterQuery(Map.of(
-                "name", ValidatedInputParser.parseString("name", false,1,15),
+                "itemName", ValidatedInputParser.parseString("name", false,1,15),
                 "quantity", ValidatedInputParser.parseQuantity("quantity", false),
                 "price", ValidatedInputParser.parseAmount("price", false)
         ));
