@@ -1,11 +1,12 @@
 package putus.teddy.command.command;
 
-import putus.teddy.data.builder.EntityBuilder;
 import putus.teddy.data.entity.CustomerPurchaseEntity;
 import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
+import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 public class CustomerOrder implements Command {
@@ -14,7 +15,7 @@ public class CustomerOrder implements Command {
         Printer.info("Taking customer order...");
         CustomerPurchaseEntity newOrder;
 
-        newOrder = EntityBuilder.buildCustomerPurchaseEntity();
+        newOrder = createCustomerPurchaseEntity();
 
         try {
             validateItem(newOrder.getItemName());
@@ -29,6 +30,15 @@ public class CustomerOrder implements Command {
         customerPurchaseRepository.create(newOrder);
         Printer.success("Order placed successfully. Order ID is " + newOrder.getId());
         return false;
+    }
+
+    private CustomerPurchaseEntity createCustomerPurchaseEntity() {
+        return new CustomerPurchaseEntity(
+                ValidatedInputParser.parseString("name", true, 1, 15),
+                ValidatedInputParser.parseString("itemName", true, 1, 15),
+                ValidatedInputParser.parseQuantity("quantity", true),
+                LocalDate.now().toString()
+        );
     }
 
     private void setTotalPrice(CustomerPurchaseEntity newOrder) throws Exception {

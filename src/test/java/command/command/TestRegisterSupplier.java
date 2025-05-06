@@ -6,9 +6,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import putus.teddy.command.command.RegisterSupplier;
-import putus.teddy.data.builder.EntityBuilder;
-import putus.teddy.data.entity.InventoryEntity;
 import putus.teddy.data.entity.SupplierEntity;
+import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
@@ -16,6 +15,7 @@ import java.io.PrintStream;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
 
 public class TestRegisterSupplier {
     static ByteArrayOutputStream outContent;
@@ -39,8 +39,10 @@ public class TestRegisterSupplier {
     @Test
     public void testRegisterSupplierWhenSupplierAlreadyExists() {
 
-        try (MockedStatic<EntityBuilder> mockBuilder = org.mockito.Mockito.mockStatic(EntityBuilder.class)) {
-            mockBuilder.when(EntityBuilder::buildSupplierEntity).thenReturn(new SupplierEntity("supplier", "5678", "email"));
+        try(
+                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
+        ) {
+            mockParser.when(()-> ValidatedInputParser.parseString(anyString(),anyBoolean(),anyInt(),anyInt())).thenReturn("supplier").thenReturn("5678").thenReturn("email");
 
             boolean result = command.execute();
             String output = outContent.toString();
@@ -53,8 +55,10 @@ public class TestRegisterSupplier {
 
     @Test
     public void testRegisterSupplier() {
-        try (MockedStatic<EntityBuilder> mockBuilder = org.mockito.Mockito.mockStatic(EntityBuilder.class)) {
-            mockBuilder.when(EntityBuilder::buildSupplierEntity).thenReturn(new SupplierEntity("supplier2", "5678", "email"));
+        try(
+                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
+        ) {
+            mockParser.when(()-> ValidatedInputParser.parseString(anyString(),anyBoolean(),anyInt(),anyInt())).thenReturn("supplier2").thenReturn("5678").thenReturn("email");
 
             boolean result = command.execute();
             String output = outContent.toString();

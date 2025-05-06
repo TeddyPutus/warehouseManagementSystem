@@ -7,10 +7,10 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import putus.teddy.command.command.CustomerOrder;
 import putus.teddy.command.command.RegisterItem;
-import putus.teddy.data.builder.EntityBuilder;
 import putus.teddy.data.entity.CustomerPurchaseEntity;
 import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
+import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
@@ -19,6 +19,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
 
 public class TestCustomerOrder {
     static ByteArrayOutputStream outContent;
@@ -51,9 +52,11 @@ public class TestCustomerOrder {
     @Test
     public void testCustomerOrder() {
         try (
-                MockedStatic<EntityBuilder> mockBuilder = org.mockito.Mockito.mockStatic(EntityBuilder.class);
+                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
         ) {
-            mockBuilder.when(EntityBuilder::buildCustomerPurchaseEntity).thenReturn(new CustomerPurchaseEntity("customer", "item1", 1, "2025-01-01"));
+            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
+            mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
+            mockParser.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(1);
 
             command.execute();
 
@@ -71,10 +74,12 @@ public class TestCustomerOrder {
 
     @Test
     public void testCustomerOrderNotEnoughStock() {
-        try (
-                MockedStatic<EntityBuilder> mockBuilder = org.mockito.Mockito.mockStatic(EntityBuilder.class);
+        try(
+                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
         ) {
-            mockBuilder.when(EntityBuilder::buildCustomerPurchaseEntity).thenReturn(new CustomerPurchaseEntity("customer", "item1", 2, "2025-01-01"));
+            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
+            mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
+            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(2);
 
             command.execute();
 
@@ -89,11 +94,14 @@ public class TestCustomerOrder {
 
     @Test
     public void testCustomerOrderLowStockAlert() {
-        try (
-                MockedStatic<EntityBuilder> mockBuilder = org.mockito.Mockito.mockStatic(EntityBuilder.class);
-        ) {
-            mockBuilder.when(EntityBuilder::buildCustomerPurchaseEntity).thenReturn(new CustomerPurchaseEntity("customer", "item1", 1, "2025-01-01"));
 
+        try(
+                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
+        ) {
+
+            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
+            mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
+            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(1);
             command.execute();
 
             String output = outContent.toString();
@@ -104,11 +112,13 @@ public class TestCustomerOrder {
 
     @Test
     public void testCustomerOrderWhenItemNotFound() {
-        try (
-                MockedStatic<EntityBuilder> mockBuilder = org.mockito.Mockito.mockStatic(EntityBuilder.class);
-        ) {
-            mockBuilder.when(EntityBuilder::buildCustomerPurchaseEntity).thenReturn(new CustomerPurchaseEntity("customer", "item2", 1, "2025-01-01"));
 
+        try(
+                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
+        ) {
+            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
+            mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item2");
+            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(2);
             command.execute();
 
             String output = outContent.toString();
@@ -122,10 +132,13 @@ public class TestCustomerOrder {
 
     @Test
     public void testFinancialEntityNotFound() {
-        try (
-                MockedStatic<EntityBuilder> mockBuilder = org.mockito.Mockito.mockStatic(EntityBuilder.class);
+
+        try(
+                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
         ) {
-            mockBuilder.when(EntityBuilder::buildCustomerPurchaseEntity).thenReturn(new CustomerPurchaseEntity("customer", "item1", 1, "2025-01-01"));
+            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
+            mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
+            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(1);
 
             CustomerOrder.financialRepository.deleteMany(Map.of());
 
