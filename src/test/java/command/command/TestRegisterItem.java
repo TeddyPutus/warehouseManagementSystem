@@ -6,9 +6,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import putus.teddy.command.command.RegisterItem;
-import putus.teddy.data.builder.EntityBuilder;
+
 import putus.teddy.data.entity.InventoryEntity;
-import putus.teddy.data.entity.SupplierEntity;
+
+import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
@@ -16,6 +17,7 @@ import java.io.PrintStream;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
 
 public class TestRegisterItem {
     static ByteArrayOutputStream outContent;
@@ -40,9 +42,10 @@ public class TestRegisterItem {
     @Test
     public void testRegisterItemWhenItemAlreadyExists() {
         try(
-                MockedStatic<EntityBuilder> mockBuilder = org.mockito.Mockito.mockStatic(EntityBuilder.class);
+                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
         ) {
-            mockBuilder.when(EntityBuilder::buildInventoryEntity).thenReturn(new InventoryEntity("item1", 2, 2.0));
+            mockParser.when(()-> ValidatedInputParser.parseString(anyString(),anyBoolean(),anyInt(),anyInt())).thenReturn("item1");
+            mockParser.when(()-> ValidatedInputParser.parseAmount(anyString(),anyBoolean())).thenReturn(0.0);
 
             boolean result = command.execute();
             String output = outContent.toString();
@@ -57,10 +60,10 @@ public class TestRegisterItem {
     @Test
     public void testRegisterItem() {
         try(
-                MockedStatic<EntityBuilder> mockBuilder = org.mockito.Mockito.mockStatic(EntityBuilder.class);
+                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
         ) {
-
-            mockBuilder.when(EntityBuilder::buildInventoryEntity).thenReturn(new InventoryEntity("item2", 2, 2.0));
+            mockParser.when(()-> ValidatedInputParser.parseString(anyString(),anyBoolean(),anyInt(),anyInt())).thenReturn("item2");
+            mockParser.when(()-> ValidatedInputParser.parseAmount(anyString(),anyBoolean())).thenReturn(0.0);
 
             boolean result = command.execute();
 

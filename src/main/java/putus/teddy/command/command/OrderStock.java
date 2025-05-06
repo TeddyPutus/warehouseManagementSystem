@@ -1,15 +1,17 @@
 package putus.teddy.command.command;
 
-import putus.teddy.data.builder.EntityBuilder;
 import putus.teddy.data.entity.SupplierPurchaseEntity;
+import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 public class OrderStock implements Command {
     public boolean execute() {
         Printer.info("Ordering stock...");
-        SupplierPurchaseEntity newOrder = EntityBuilder.buildSupplierPurchaseEntity();
+
+        SupplierPurchaseEntity newOrder = createSupplierPurchaseEntity();
 
         try{
             validateItem(newOrder.getItemName());
@@ -23,6 +25,16 @@ public class OrderStock implements Command {
         Printer.success("Order placed successfully. Order ID is " + newOrder.getId());
 
         return false;
+    }
+
+    private SupplierPurchaseEntity createSupplierPurchaseEntity() {
+        return new SupplierPurchaseEntity(
+                ValidatedInputParser.parseString("supplier name", true, 1, 15),
+                LocalDate.now().toString(),
+                ValidatedInputParser.parseString("item name", true, 1, 15),
+                ValidatedInputParser.parseQuantity("quantity", true),
+                ValidatedInputParser.parseAmount("price", true)
+        );
     }
 
     private void validateSupplier(String supplierName) throws Exception {
