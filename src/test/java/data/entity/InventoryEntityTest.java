@@ -30,7 +30,7 @@ public class InventoryEntityTest {
         HashMap<String, Object> updates = new HashMap<>();
         updates.put("itemName", "UpdatedItem");
         updates.put("quantity", 20);
-        updates.put("price", 200.0);
+        updates.put("pricePerUnit", 200.0);
 
         inventoryItem.update(updates);
 
@@ -44,7 +44,7 @@ public class InventoryEntityTest {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("itemName", "Item1");
         queryMap.put("quantity", 10);
-        queryMap.put("price", 100.0);
+        queryMap.put("pricePerUnit", 100.0);
 
         assertTrue(inventoryItem.matches(queryMap));
     }

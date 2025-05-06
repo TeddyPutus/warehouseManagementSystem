@@ -75,8 +75,14 @@ public class Printer {
 
     public static void printTable(Stream<DataEntity> dataEntities, String tableHead) {
         printTableHead(tableHead);
+        int[] rowCount = {0};
         dataEntities.forEach(entity -> {
             info(entity.getTableRow(), false);
+            rowCount[0]++;
         });
+
+        if (rowCount[0] == 0) {
+            warning("No data found.");
+        }
     }
 }
