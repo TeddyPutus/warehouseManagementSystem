@@ -28,6 +28,7 @@ public class TestCommandParser {
 
     @Test
     public void testParseCommand() {
+        when(scannerMock.hasNextLine()).thenReturn(true);
         when(scannerMock.nextLine()).thenReturn("help");
 
         CommandType expectedType = CommandType.HELP;
@@ -38,6 +39,7 @@ public class TestCommandParser {
 
     @Test
     public void testParseCommandHandlesInvalidCommand() {
+        when(scannerMock.hasNextLine()).thenReturn(true);
         when(scannerMock.nextLine()).thenReturn("invalid_command").thenReturn("help");
 
         CommandType expectedType = CommandType.HELP;
@@ -52,6 +54,7 @@ public class TestCommandParser {
 
     @Test
     public void testParseCommandCaseInsensitive() {
+        when(scannerMock.hasNextLine()).thenReturn(true);
         when(scannerMock.nextLine()).thenReturn("RegIstER_SUpplIER");
 
         CommandType expectedType = CommandType.REGISTER_SUPPLIER;
@@ -62,6 +65,7 @@ public class TestCommandParser {
 
     @Test
     public void testParseCommandHandlesEmptyInput() {
+        when(scannerMock.hasNextLine()).thenReturn(true);
         when(scannerMock.nextLine()).thenReturn("").thenReturn("help");
 
         CommandType expectedType = CommandType.HELP;
