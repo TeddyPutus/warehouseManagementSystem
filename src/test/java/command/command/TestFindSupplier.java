@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import putus.teddy.command.command.Command;
 import putus.teddy.command.command.FindInventory;
 import putus.teddy.command.command.FindSuppliers;
 import putus.teddy.data.builder.QueryBuilder;
@@ -15,12 +16,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestFindSupplier {
     static ByteArrayOutputStream outContent;
-    FindSuppliers findSuppliers = new FindSuppliers();
+    FindSuppliers command = new FindSuppliers();
 
     static SupplierEntity entity1 = new SupplierEntity("supplier1", "1234", "email");
     static SupplierEntity entity2 = new SupplierEntity("supplier2", "5678", "email2");
@@ -44,7 +44,8 @@ public class TestFindSupplier {
                     "phoneNumber", "1234"
             ));
 
-            findSuppliers.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
 
             String output = outContent.toString();
 
@@ -65,7 +66,8 @@ public class TestFindSupplier {
                     "phoneNumber", "9999"
             ));
 
-            findSuppliers.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
 
             assertFalse(outContent.toString().contains("supplier1"));
             assertFalse(outContent.toString().contains("supplier2"));

@@ -6,7 +6,7 @@ import putus.teddy.data.entity.DataEntity;
 import putus.teddy.printer.Printer;
 
 public class FindOrders implements Command{
-    public boolean execute() {
+    public Result execute() {
         Printer.info("Finding Customer Orders, please enter optional filter values...");
 
         Printer.printTable(
@@ -14,6 +14,6 @@ public class FindOrders implements Command{
                 CustomerPurchaseEntity.getTableHead()
         );
 
-        return false;
+        return Result.SUCCESS;
     }
 }

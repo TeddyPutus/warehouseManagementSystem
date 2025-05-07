@@ -12,33 +12,19 @@ import static putus.teddy.data.entity.SupplierPurchaseEntity.Status.PENDING;
 
 public class TakeDelivery implements Command {
 
-    public boolean execute() {
+    public Result execute() {
         Printer.info("Taking delivery...");
+        SupplierPurchaseEntity order;
+        InventoryEntity inventoryEntity;
+        FinancialEntity financialEntity;
 
-        String orderId = ValidatedInputParser.parseString("Order ID", true, 1, 36);
-        SupplierPurchaseEntity order = supplierPurchaseRepository.findOne(Map.of("id", orderId));
-
-        if (order == null) {
-            Printer.warning("Order not found.");
-            return false;
-        }
-        if (!order.getStatus().equals(PENDING)) {
-            Printer.warning("Order already delivered.");
-            return false;
-        }
-
-        InventoryEntity inventoryEntity = inventoryRepository.findOne(Map.of("itemName", order.getItemName()));
-
-        if(inventoryEntity == null){
-            Printer.error("Item not found in inventory.");
-            return false;
-        }
-
-        FinancialEntity financialEntity = financialRepository.findOne(Map.of("itemName", order.getItemName()));
-
-        if(financialEntity == null){
-            Printer.error("Financial entity not found.");
-            return false;
+        try{
+            order = getOrder();
+            inventoryEntity = getInventory(order.getItemName());
+            financialEntity = getFinancial(order.getItemName());
+        }catch(Exception e){
+            Printer.error(e.getMessage());
+            return Result.FAILURE;
         }
 
         inventoryEntity.setQuantity(inventoryEntity.getQuantity() + order.getQuantity());
@@ -50,6 +36,40 @@ public class TakeDelivery implements Command {
 
         Printer.success("Delivery taken successfully.");
 
-        return false;
+        return Result.SUCCESS;
+    }
+
+    private FinancialEntity getFinancial(String itemName) throws Exception {
+
+        FinancialEntity financialEntity = financialRepository.findOne(Map.of("itemName", itemName));
+
+        if(financialEntity == null){
+            throw new Exception("Financial entity not found.");
+        }
+        return financialEntity;
+    }
+
+    private InventoryEntity getInventory(String itemName) throws Exception {
+        InventoryEntity inventoryEntity = inventoryRepository.findOne(Map.of("itemName", itemName));
+
+        if(inventoryEntity == null){
+            throw new Exception("Item not found in inventory.");
+        }
+
+        return inventoryEntity;
+    }
+
+    private SupplierPurchaseEntity getOrder() throws Exception{
+        String orderId = ValidatedInputParser.parseString("Order ID", true, 1, 36);
+        SupplierPurchaseEntity order = supplierPurchaseRepository.findOne(Map.of("id", orderId));
+
+        if (order == null) {
+            throw new Exception("Order not found.");
+        }
+        if (!order.getStatus().equals(PENDING)) {
+            throw new Exception("Order already delivered.");
+        }
+
+        return order;
     }
 }

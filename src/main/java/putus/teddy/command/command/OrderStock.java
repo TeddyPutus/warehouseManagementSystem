@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.Map;
 
 public class OrderStock implements Command {
-    public boolean execute() {
+    public Result execute() {
         Printer.info("Ordering stock...");
 
         SupplierPurchaseEntity newOrder = createSupplierPurchaseEntity();
@@ -18,13 +18,13 @@ public class OrderStock implements Command {
             validateSupplier(newOrder.getSupplierName());
         }catch (Exception e){
             Printer.error(e.getMessage());
-            return false;
+            return Result.FAILURE;
         }
 
         supplierPurchaseRepository.create(newOrder);
         Printer.success("Order placed successfully. Order ID is " + newOrder.getId());
 
-        return false;
+        return Result.SUCCESS;
     }
 
     private SupplierPurchaseEntity createSupplierPurchaseEntity() {

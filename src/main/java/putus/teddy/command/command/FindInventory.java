@@ -7,7 +7,7 @@ import putus.teddy.printer.Printer;
 
 public class FindInventory implements Command {
 
-    public boolean execute() {
+    public Result execute() {
         Printer.info("Finding Inventory, please enter optional filter values...");
 
         Printer.printTable(
@@ -15,6 +15,6 @@ public class FindInventory implements Command {
                 InventoryEntity.getTableHead()
         );
 
-        return false;
+        return Result.SUCCESS;
     }
 }

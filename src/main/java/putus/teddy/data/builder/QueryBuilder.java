@@ -18,7 +18,7 @@ public class QueryBuilder {
         return filterQuery(Map.of(
                 "itemName", ValidatedInputParser.parseString("name", false,1,15),
                 "quantity", ValidatedInputParser.parseQuantity("quantity", false),
-                "price", ValidatedInputParser.parseAmount("price", false)
+                "pricePerUnit", ValidatedInputParser.parseAmount("price", false)
         ));
     }
 
@@ -36,7 +36,7 @@ public class QueryBuilder {
                 "supplierName", ValidatedInputParser.parseString("supplier name", false,1,15),
                 "itemName", ValidatedInputParser.parseString("item name", false,1,15),
                 "quantity", ValidatedInputParser.parseQuantity("quantity", false),
-                "price", ValidatedInputParser.parseAmount("price", false),
+                "pricePerUnit", ValidatedInputParser.parseAmount("price", false),
                 "date", ValidatedInputParser.parseString("date", false, 1,10)
         ));
     }

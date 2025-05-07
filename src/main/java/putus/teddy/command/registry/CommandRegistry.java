@@ -26,13 +26,14 @@ public class CommandRegistry {
     }
 
 
-    public boolean processCommand(CommandType command){
+    public Command.Result processCommand(CommandType command){
         Command handler = commandHandlers.getOrDefault(command, commandHandlers.get(CommandType.HELP));
+
         if (handler != null) {
             return handler.execute();
-        } else {
-            Printer.error("Unimplemented command: " + command);
         }
-        return false;
+
+        Printer.error("Unimplemented command: " + command);
+        return Command.Result.FAILURE;
     }
 }

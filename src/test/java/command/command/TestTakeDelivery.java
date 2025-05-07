@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import putus.teddy.command.command.Command;
 import putus.teddy.command.command.FindStockOrders;
 import putus.teddy.command.command.TakeDelivery;
 import putus.teddy.data.entity.FinancialEntity;
@@ -56,7 +57,8 @@ public class TestTakeDelivery {
         ) {
             mockParser.when(() -> InputParser.parseString("Order ID", true)).thenReturn(supplierPurchaseEntity.getId());
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
 
             String output = outContent.toString();
 
@@ -80,7 +82,8 @@ public class TestTakeDelivery {
         ) {
             mockParser.when(() -> InputParser.parseString("Order ID", true)).thenReturn("nonexistent_order_id");
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.FAILURE, result);
 
             String output = outContent.toString();
 
@@ -97,7 +100,8 @@ public class TestTakeDelivery {
             supplierPurchaseEntity.setStatus(SupplierPurchaseEntity.Status.DELIVERED);
             mockParser.when(() -> InputParser.parseString("Order ID", true)).thenReturn(supplierPurchaseEntity.getId());
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.FAILURE, result);
 
             String output = outContent.toString();
 
@@ -113,7 +117,8 @@ public class TestTakeDelivery {
             supplierPurchaseEntity.update(Map.of("itemName", "some_item"));
             mockParser.when(() -> InputParser.parseString("Order ID", true)).thenReturn(supplierPurchaseEntity.getId());
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.FAILURE, result);
 
             String output = outContent.toString();
 
@@ -129,7 +134,8 @@ public class TestTakeDelivery {
             financialEntity.update(Map.of("itemName", "nonexistent_item"));
             mockParser.when(() -> InputParser.parseString("Order ID", true)).thenReturn(supplierPurchaseEntity.getId());
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.FAILURE, result);
 
             String output = outContent.toString();
 

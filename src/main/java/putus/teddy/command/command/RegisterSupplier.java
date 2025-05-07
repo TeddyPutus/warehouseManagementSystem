@@ -10,19 +10,19 @@ import java.util.Map;
 public class RegisterSupplier implements Command {
 
     @Override
-    public boolean execute() {
+    public Result execute() {
         Printer.info("Registering supplier...");
 
         SupplierEntity newSupplier = createSupplierEntity();
 
         if(supplierRepository.findOne(Map.of("name", newSupplier.getName())) != null) {
             Printer.error("Supplier already exists.");
-            return false;
+            return Result.FAILURE;
         }
 
         supplierRepository.create(newSupplier);
         Printer.success("Supplier registered successfully.");
-        return false;
+        return Result.SUCCESS;
     }
 
     private SupplierEntity createSupplierEntity() {

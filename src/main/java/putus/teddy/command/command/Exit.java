@@ -4,8 +4,8 @@ import putus.teddy.printer.Printer;
 
 public class Exit implements Command {
 
-    public boolean execute() {
+    public Result execute() {
         Printer.info("Exiting the application...");
-        return true;
+        return Result.EXIT;
     }
 }

@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import putus.teddy.command.command.Command;
 import putus.teddy.command.command.CustomerOrder;
 import putus.teddy.command.command.RegisterItem;
 import putus.teddy.data.entity.CustomerPurchaseEntity;
@@ -58,11 +59,12 @@ public class TestCustomerOrder {
             mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
             mockParser.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(1);
 
-            command.execute();
+            Command.Result result = command.execute();
 
             String output = outContent.toString();
 
             assertTrue(output.contains("Order placed successfully."));
+            assertEquals(Command.Result.SUCCESS, result);
 
             assertEquals(1, RegisterItem.customerPurchaseRepository.findAll().toList().size());
             assertEquals(0, RegisterItem.inventoryRepository.findOne(Map.of("itemName", "item1")).getQuantity());
@@ -81,11 +83,12 @@ public class TestCustomerOrder {
             mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
             mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(2);
 
-            command.execute();
+            Command.Result result = command.execute();
 
             String output = outContent.toString();
 
             assertTrue(output.contains("Not enough stock available."));
+            assertEquals(Command.Result.FAILURE, result);
 
             assertEquals(0, RegisterItem.customerPurchaseRepository.findAll().toList().size());
             assertEquals(1, RegisterItem.inventoryRepository.findOne(Map.of("itemName", "item1")).getQuantity());
@@ -102,7 +105,9 @@ public class TestCustomerOrder {
             mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
             mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
             mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(1);
-            command.execute();
+
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
 
             String output = outContent.toString();
 
@@ -119,7 +124,8 @@ public class TestCustomerOrder {
             mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
             mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item2");
             mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(2);
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.FAILURE, result);
 
             String output = outContent.toString();
 
@@ -142,7 +148,8 @@ public class TestCustomerOrder {
 
             CustomerOrder.financialRepository.deleteMany(Map.of());
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.FAILURE, result);
 
             String output = outContent.toString();
 
