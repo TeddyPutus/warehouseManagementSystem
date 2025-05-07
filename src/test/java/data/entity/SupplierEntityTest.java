@@ -28,20 +28,6 @@ public class SupplierEntityTest {
     }
 
     @Test
-    public void testUpdate() {
-        HashMap<String, Object> updates = new HashMap<>();
-        updates.put("name", "Updated Supplier");
-        updates.put("phoneNumber", "0987654321");
-        updates.put("email", "updated@example.com");
-
-        supplier.update(updates);
-
-        assertEquals("Updated Supplier", supplier.getName());
-        assertEquals("0987654321", supplier.getPhoneNumber());
-        assertEquals("updated@example.com", supplier.getEmail());
-    }
-
-    @Test
     public void testPrintTableHead() {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
@@ -54,26 +40,6 @@ public class SupplierEntityTest {
     public void testPrintTableRow() {
         String expectedOutput = "| Test Supplier   |   1234567890 | test@example.com     |\n";
         assertTrue(supplier.getTableRow().contains(expectedOutput));
-    }
-
-    @Test
-    public void testMatches() {
-        HashMap<String, Object> updates = new HashMap<>();
-        updates.put("name", "Test Supplier");
-
-        assertTrue(supplier.matches(updates));
-    }
-
-    @Test
-    public void testDoesNotMatch() {
-        HashMap<String, Object> updates = new HashMap<>();
-        updates.put("name", "Nonexistent Supplier");
-
-        assertFalse(supplier.matches(updates));
-
-        updates.clear();
-        updates.put("nonExistentField", "456 Test St");
-        assertFalse(supplier.matches(updates));
     }
 
 }

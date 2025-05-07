@@ -9,13 +9,17 @@ import putus.teddy.command.command.Command;
 import putus.teddy.command.command.FindInventory;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.InventoryEntity;
+import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class TestFindInventory {
     static ByteArrayOutputStream outContent;
@@ -27,7 +31,7 @@ public class TestFindInventory {
 
     @BeforeClass
     public static void classSetUp() {
-        FindInventory.inventoryRepository.deleteMany(Map.of());
+        FindInventory.inventoryRepository.deleteMany(List.of(entity -> true));
         FindInventory.inventoryRepository.create(inventoryEntity1);
         FindInventory.inventoryRepository.create(inventoryEntity2);
         FindInventory.inventoryRepository.create(inventoryEntity3);
@@ -37,12 +41,10 @@ public class TestFindInventory {
 
     @Test
     public void testFindInventory() {
-
-        try (MockedStatic<QueryBuilder> mockedBuilder = org.mockito.Mockito.mockStatic(QueryBuilder.class)) {
-            // Mock the behavior of the static method
-            mockedBuilder.when(QueryBuilder::supplierQuery).thenReturn(Map.of(
-                    "quantity", 10
-            ));
+        try (MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class)) {
+            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("");
+            mockParser.when(()-> ValidatedInputParser.parseAmount(anyString(),anyBoolean())).thenReturn(Double.MIN_VALUE);
+            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(10);
 
             Command.Result result = command.execute();
             assertEquals(Command.Result.SUCCESS, result);
@@ -55,11 +57,10 @@ public class TestFindInventory {
 
     @Test
     public void testFindInventoryWithNoResults() {
-        try (MockedStatic<QueryBuilder> mockedBuilder = org.mockito.Mockito.mockStatic(QueryBuilder.class)) {
-
-            mockedBuilder.when(QueryBuilder::inventoryQuery).thenReturn(Map.of(
-                    "quantity", 10000
-            ));
+        try (MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class)) {
+            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("");
+            mockParser.when(()-> ValidatedInputParser.parseAmount(anyString(),anyBoolean())).thenReturn(Double.MIN_VALUE);
+            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(10000);
 
             Command.Result result = command.execute();
             assertEquals(Command.Result.SUCCESS, result);

@@ -10,13 +10,17 @@ import putus.teddy.command.command.UpdateSupplier;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.parser.InputParser;
+import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class TestUpdateSupplier {
     static ByteArrayOutputStream outContent;
@@ -26,7 +30,7 @@ public class TestUpdateSupplier {
 
     @BeforeClass
     public static void classSetUp() {
-        UpdateSupplier.supplierRepository.deleteMany(Map.of());
+        UpdateSupplier.supplierRepository.deleteMany(List.of(entity -> true));
         UpdateSupplier.supplierRepository.create(entity1);
         outContent = new ByteArrayOutputStream();
         Printer.setOutputStream(new PrintStream(outContent));
@@ -40,15 +44,21 @@ public class TestUpdateSupplier {
     @Test
     public void testUpdateSupplier() {
 
-        try (MockedStatic<InputParser> mockParser = org.mockito.Mockito.mockStatic(InputParser.class);
+        try (MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
              MockedStatic<QueryBuilder> mockedBuilder = org.mockito.Mockito.mockStatic(QueryBuilder.class)) {
             mockParser.when(
-                    () -> InputParser.parseString("Supplier ID", true)
-            ).thenReturn(entity1.getId());
+                    () -> ValidatedInputParser.parseString("name", false, 1, 15)
+            ).thenReturn("");
+            mockParser.when(
+                    () -> ValidatedInputParser.parseString("phone number", false, 1, 12)
+            ).thenReturn("5678");
+            mockParser.when(
+                    () -> ValidatedInputParser.parseString("email", false, 1, 20)
+            ).thenReturn("");
 
-            mockedBuilder.when(QueryBuilder::supplierQuery).thenReturn(Map.of(
-                    "phoneNumber", "5678"
-            ));
+            Predicate<SupplierEntity> predicate = entity -> entity.getId().equals(entity1.getId());
+
+            mockedBuilder.when(() -> QueryBuilder.supplierSearchById(anyString())).thenReturn(List.of(predicate));
 
             Command.Result result = command.execute();
             assertEquals(Command.Result.SUCCESS, result);

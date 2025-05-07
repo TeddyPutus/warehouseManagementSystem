@@ -1,5 +1,6 @@
 package putus.teddy.command.command;
 
+import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierPurchaseEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
@@ -38,13 +39,13 @@ public class OrderStock implements Command {
     }
 
     private void validateSupplier(String supplierName) throws Exception {
-        if (supplierRepository.findOne(Map.of("name", supplierName)) == null) {
+        if (supplierRepository.findOne(QueryBuilder.supplierSearchByName(supplierName)) == null) {
             throw new Exception("Supplier does not exist. Please register supplier first.");
         }
     }
 
     private void validateItem(String itemName) throws Exception {
-        if (inventoryRepository.findOne(Map.of("itemName", itemName)) == null) {
+        if (inventoryRepository.findOne(QueryBuilder.searchInventoryByItemName(itemName)) == null) {
             throw new Exception("Item does not exist. Please register item first.");
         }
     }

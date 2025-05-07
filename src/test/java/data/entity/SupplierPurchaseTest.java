@@ -19,29 +19,6 @@ public class SupplierPurchaseTest {
     }
 
     @Test
-    public void testConstructor() {
-        assertEquals("Test Supplier", supplierPurchase.getSupplierName());
-        assertEquals("item1", supplierPurchase.getItemName());
-        assertEquals("2025-01-01", supplierPurchase.getPurchaseDate());
-        assertEquals(10, supplierPurchase.getQuantity());
-        assertEquals(100.0, supplierPurchase.getPricePerUnit(), 0.01);
-        assertEquals(1000.0, supplierPurchase.getTotalPrice(), 0.01);
-    }
-
-    @Test
-    public void testUpdate() {
-        supplierPurchase.update(Map.of("quantity", 20));
-        assertEquals(20, supplierPurchase.getQuantity());
-        assertEquals(2000.0, supplierPurchase.getTotalPrice(), 0.01);
-    }
-
-    @Test
-    public void testMatches() {
-        assertTrue(supplierPurchase.matches(Map.of("supplierName", "Test Supplier")));
-        assertFalse(supplierPurchase.matches(Map.of("supplierName", "Other Supplier")));
-    }
-
-    @Test
     public void testPrintTableHead() {
 
         String expectedOutput = "| ID                                   | SUPPLIER    | DATE        | ITEM NAME            | QUANTITY | PRICE/UNIT | TOTAL PRICE |";

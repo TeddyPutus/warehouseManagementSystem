@@ -31,40 +31,6 @@ public class SupplierPurchaseEntity implements DataEntity {
         this.status = Status.PENDING;
     }
 
-    public void update(Map<String, Object> query) {
-        query.forEach((key, value) -> {
-            switch (key) {
-                case "supplierName" -> this.supplierName = (String) value;
-                case "purchaseDate" -> this.purchaseDate = (String) value;
-                case "itemName" -> this.itemName = (String) value;
-                case "quantity" -> this.quantity = (Integer) value;
-                case "pricePerUnit" -> this.pricePerUnit = (Double) value;
-                case "status" -> this.status = (Status) value;
-            }
-        });
-
-        totalPrice = quantity * pricePerUnit;
-    }
-
-    public boolean matches(Map<String, Object> queryMap) {
-        return queryMap.entrySet().stream()
-                .allMatch(entry -> {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
-
-                    return switch (key) {
-                        case "id" -> id.equals(value);
-                        case "supplierName" -> supplierName.equals(value);
-                        case "purchaseDate" -> purchaseDate.equals(value);
-                        case "itemName" -> itemName.equals(value);
-                        case "quantity" -> quantity.equals(value);
-                        case "pricePerUnit" -> value instanceof Double && DataEntity.compareDoubles(pricePerUnit, (Double) value);
-                        case "totalPrice" -> value instanceof Double && DataEntity.compareDoubles(totalPrice, (Double) value);
-                        default -> false;
-                    };
-                });
-    }
-
     public static String getTableHead() {
         return tableHead;
     }
@@ -81,6 +47,14 @@ public class SupplierPurchaseEntity implements DataEntity {
         return supplierName;
     }
 
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
     public String getPurchaseDate() {
         return purchaseDate;
     }
@@ -89,7 +63,7 @@ public class SupplierPurchaseEntity implements DataEntity {
         return itemName;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
