@@ -6,7 +6,7 @@ classDiagram
         +Result execute()
     }
 
-    class Repository {
+    class Repository{
         +bool create()
         +T findOne()
         +Stream findAll()
@@ -16,6 +16,9 @@ classDiagram
         +int deleteMany()
     }
 
+    class InMemoryRepository {
+    }
+
     class DataEntity {
         +getTableHead()
         +getTableRow()
@@ -23,7 +26,11 @@ classDiagram
     }
 
     class QueryBuilder{
-        +Map buildQuery()
+        +Map inventoryQuery()
+        +Map supplierQuery()
+        +Map customerOrderQuery()
+        +Map supplierPurchaseQuery()
+        -Map filterQuery()
     }
 
     class CommandParser {
@@ -43,15 +50,29 @@ classDiagram
     }
 
     class Printer{
-
+        +void info()
+        +void error()
+        +void success()
+        +void warning()
+        +void alert()
+        +void logo()
+        +void printTable()
+        -void printTableRow()
+        +public void setOutputStream()
     }
 
+    class CommandRegistry {
+        +Result processCommand()
+    }
+
+    Repository --|> InMemoryRepository: Implements, T = DataEntity
     InputParser --|> ValidatedInputParser: Extends
+    ValidatedInputParser --> QueryBuilder
     ValidatedInputParser --> Command
     Command --> Printer
     QueryBuilder --> Command: Creates hashmaps
-    Repository <--> Command: Command sends querys/entities,\nReceives Entities
-    DataEntity .. Repository: Stores
+    InMemoryRepository <--> Command: Command sends querys/entities,\nReceives Entities
+    DataEntity .. InMemoryRepository: Stores
     DataEntity .. Command: Uses
     CommandRegistry *-- Command: Contains Map of Commands
     CommandParser --|> CommandRegistry: Uses to select command
