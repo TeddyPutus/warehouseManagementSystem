@@ -23,39 +23,16 @@ public class FinancialEntity implements DataEntity {
         calculateProfit();
     }
 
-    public boolean matches(Map<String, Object> queryMap) {
-        return queryMap.entrySet().stream()
-                .allMatch(entry -> {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
-
-                    return switch (key) {
-                        case "itemName" -> itemName.equals(value);
-                        case "quantityPurchased" -> quantityPurchased.equals(value);
-                        case "quantitySold" -> quantitySold.equals(value);
-                        case "totalRevenue" ->  value instanceof Double && DataEntity.compareDoubles(totalRevenue, (Double) value);
-                        case "totalCost" ->  value instanceof Double && DataEntity.compareDoubles(totalCost, (Double) value);
-                        case "profit" ->  value instanceof Double && DataEntity.compareDoubles(profit, (Double) value);
-                        default -> false;
-                    };
-                });
-    }
-
     private void calculateProfit() {
         this.profit = this.totalRevenue - this.totalCost;
     }
 
-    public void update(Map<String, Object> query) {
-        query.forEach((key, value) -> {
-            switch (key) {
-                case "quantityPurchased" -> this.quantityPurchased = (Integer) value;
-                case "itemName" -> this.itemName = (String) value;
-                case "quantitySold" -> this.quantitySold = (Integer) value;
-                case "totalRevenue" -> this.totalRevenue = (Double) value;
-                case "totalCost" -> this.totalCost = (Double) value;
-            }
-        });
-        calculateProfit();
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
     public static String getTableHead() {
@@ -84,6 +61,7 @@ public class FinancialEntity implements DataEntity {
 
     public void setTotalRevenue(double totalRevenue) {
         this.totalRevenue = totalRevenue;
+        calculateProfit();
     }
     public void setTotalCost(double totalCost) {
         this.totalCost = totalCost;

@@ -1,5 +1,6 @@
 package putus.teddy.command.command;
 
+import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.CustomerPurchaseEntity;
 import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
@@ -10,6 +11,8 @@ import java.time.LocalDate;
 import java.util.Map;
 
 public class CustomerOrder implements Command {
+    private FinancialEntity financialEntity;
+    private InventoryEntity inventoryEntity;
 
     public Result execute() {
         Printer.info("Taking customer order...");
@@ -42,9 +45,10 @@ public class CustomerOrder implements Command {
     }
 
     private void setTotalPrice(CustomerPurchaseEntity newOrder) throws Exception {
+
         try{
             newOrder.setTotalPrice(
-                    newOrder.getQuantity() * inventoryRepository.findOne(Map.of("itemName", newOrder.getItemName())).getPricePerUnit()
+                    newOrder.getQuantity() * inventoryEntity.getPricePerUnit()
             );
         } catch (Exception e) {
             throw new Exception("Error generating order: " + e.getMessage());
@@ -52,8 +56,6 @@ public class CustomerOrder implements Command {
     }
 
     private void updateFinancialEntity(CustomerPurchaseEntity newOrder) throws Exception {
-        FinancialEntity financialEntity = financialRepository.findOne(Map.of("itemName", newOrder.getItemName()));
-
         if (financialEntity == null) {
             throw new Exception("Financial entity not found for item: " + newOrder.getItemName());
         }
@@ -68,7 +70,6 @@ public class CustomerOrder implements Command {
     }
 
     private void updateStockLevel(String itemName, int quantity) throws Exception {
-        InventoryEntity inventoryEntity = inventoryRepository.findOne(Map.of("itemName", itemName));
         if (inventoryEntity.getQuantity() < quantity) {
             throw new Exception("Not enough stock available. Please order more stock.");
         }
@@ -83,10 +84,12 @@ public class CustomerOrder implements Command {
     }
 
     private void validateItem(String itemName) throws Exception {
-        if (inventoryRepository.findOne(Map.of("itemName", itemName)) == null) {
+        inventoryEntity = inventoryRepository.findOne(QueryBuilder.searchInventoryByItemName(itemName));
+        financialEntity = financialRepository.findOne(QueryBuilder.searchFinancial(itemName));
+        if (inventoryEntity == null) {
             throw new Exception("Item does not exist. Please register item first.");
         }
-        if (financialRepository.findOne(Map.of("itemName", itemName)) == null) {
+        if (financialEntity== null) {
             throw new Exception("Financial entity not found for item: " + itemName);
         }
     }

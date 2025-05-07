@@ -17,32 +17,6 @@ public class SupplierEntity implements DataEntity {
         this.email = email;
     }
 
-    public void update(Map<String, Object> query) {
-        query.forEach((key, value) -> {
-            switch (key) {
-                case "name" -> this.name = (String) value;
-                case "phoneNumber" -> this.phoneNumber = (String) value;
-                case "email" -> this.email = (String) value;
-            }
-        });
-    }
-
-    public boolean matches(Map<String, Object> queryMap) {
-        return queryMap.entrySet().stream()
-                .allMatch(entry -> {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
-
-                    return switch (key) {
-                        case "id" -> id.equals(value);
-                        case "name" -> name.equals(value);
-                        case "phoneNumber" -> phoneNumber.equals(value);
-                        case "email" -> email.equals(value);
-                        default -> false;
-                    };
-                });
-    }
-
     public String getName() {
         return name;
     }
@@ -64,5 +38,18 @@ public class SupplierEntity implements DataEntity {
     }
     public String getTableRow() {
         return String.format(columnWidth + "\n", id, name, phoneNumber, email);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

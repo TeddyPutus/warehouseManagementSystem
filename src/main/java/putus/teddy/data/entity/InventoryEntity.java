@@ -15,33 +15,12 @@ public class InventoryEntity implements DataEntity{
         this.pricePerUnit = pricePerUnit;
     }
 
-    public void update(Map<String, Object> query) {
-        query.forEach((key, value) -> {
-            switch (key) {
-                case "itemName" -> this.itemName = (String) value;
-                case "quantity" -> this.quantity = (Integer) value;
-                case "pricePerUnit" -> this.pricePerUnit = (Double) value;
-            }
-        });
-    }
-
-    public boolean matches(Map<String, Object> queryMap) {
-        return queryMap.entrySet().stream()
-                .allMatch(entry -> {
-                    String key = entry.getKey();
-                    Object value = entry.getValue();
-
-                    return switch (key) {
-                        case "itemName" -> itemName.equals(value);
-                        case "quantity" -> quantity.equals(value);
-                        case "pricePerUnit" -> value instanceof Double && DataEntity.compareDoubles(pricePerUnit, (Double) value);
-                        default -> false;
-                    };
-                });
-    }
-
     public static String getTableHead() {
         return tableHead;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
     public String getTableRow() {
@@ -52,7 +31,7 @@ public class InventoryEntity implements DataEntity{
         return itemName;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
@@ -62,5 +41,9 @@ public class InventoryEntity implements DataEntity{
 
     public Double getPricePerUnit() {
         return pricePerUnit;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }

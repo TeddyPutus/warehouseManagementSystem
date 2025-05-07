@@ -1,5 +1,6 @@
 package putus.teddy.command.command;
 
+import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
 import putus.teddy.data.entity.SupplierPurchaseEntity;
@@ -41,7 +42,7 @@ public class TakeDelivery implements Command {
 
     private FinancialEntity getFinancial(String itemName) throws Exception {
 
-        FinancialEntity financialEntity = financialRepository.findOne(Map.of("itemName", itemName));
+        FinancialEntity financialEntity = financialRepository.findOne(QueryBuilder.searchFinancial(itemName));
 
         if(financialEntity == null){
             throw new Exception("Financial entity not found.");
@@ -50,7 +51,7 @@ public class TakeDelivery implements Command {
     }
 
     private InventoryEntity getInventory(String itemName) throws Exception {
-        InventoryEntity inventoryEntity = inventoryRepository.findOne(Map.of("itemName", itemName));
+        InventoryEntity inventoryEntity = inventoryRepository.findOne(QueryBuilder.searchInventoryByItemName(itemName));
 
         if(inventoryEntity == null){
             throw new Exception("Item not found in inventory.");
@@ -61,7 +62,7 @@ public class TakeDelivery implements Command {
 
     private SupplierPurchaseEntity getOrder() throws Exception{
         String orderId = ValidatedInputParser.parseString("Order ID", true, 1, 36);
-        SupplierPurchaseEntity order = supplierPurchaseRepository.findOne(Map.of("id", orderId));
+        SupplierPurchaseEntity order = supplierPurchaseRepository.findOne(QueryBuilder.searchSupplierPurchaseById(orderId));
 
         if (order == null) {
             throw new Exception("Order not found.");

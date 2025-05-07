@@ -15,6 +15,7 @@ import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -28,8 +29,8 @@ public class TestRegisterItem {
 
     @BeforeClass
     public static void classSetUp() {
-        RegisterItem.inventoryRepository.deleteMany(Map.of());
-        RegisterItem.financialRepository.deleteMany(Map.of());
+        RegisterItem.inventoryRepository.deleteMany(List.of(entity -> true));
+        RegisterItem.financialRepository.deleteMany(List.of(entity -> true));
         RegisterItem.inventoryRepository.create(entity1);
         outContent = new ByteArrayOutputStream();
         Printer.setOutputStream(new PrintStream(outContent));
@@ -55,7 +56,7 @@ public class TestRegisterItem {
             assertTrue(output.contains("Item already exists."));
             assertFalse(output.contains("Item registered successfully."));
             assertEquals(1, RegisterItem.inventoryRepository.findAll().toList().size());
-            assertNull(RegisterItem.financialRepository.findOne(Map.of("itemName", "item1")));
+            assertNull(RegisterItem.financialRepository.findOne(List.of(entity -> entity.getItemName().equals("item1"))));
         }
     }
 
@@ -74,8 +75,11 @@ public class TestRegisterItem {
             assertTrue(output.contains("Item registered successfully."));
             assertFalse(output.contains("Item already exists."));
             assertEquals(2, RegisterItem.inventoryRepository.findAll().toList().size());
-            assertNotNull(RegisterItem.inventoryRepository.findOne(Map.of("itemName", "item2")));
-            assertNotNull(RegisterItem.financialRepository.findOne(Map.of("itemName", "item2")));
+            assertNotNull(RegisterItem.inventoryRepository.findOne(
+                    List.of(entity -> entity.getItemName().equals("item2"))));
+            assertNotNull(RegisterItem.financialRepository.findOne(
+                    List.of(entity -> entity.getItemName().equals("item2"))
+            ));
         }
     }
 

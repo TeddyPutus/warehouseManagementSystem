@@ -3,10 +3,10 @@ package putus.teddy.command.command;
 
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
-import putus.teddy.data.parser.InputParser;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class UpdateSupplier implements Command {
@@ -14,7 +14,7 @@ public class UpdateSupplier implements Command {
     public Result execute() {
         Printer.info("Updating supplier information...");
         String supplierId = ValidatedInputParser.parseString("Supplier ID", true, 1, 36);
-        SupplierEntity supplier = supplierRepository.findOne(Map.of("id", supplierId));
+        SupplierEntity supplier = supplierRepository.findOne(QueryBuilder.supplierSearchById(supplierId));
 
         if (supplier == null) {
             Printer.warning("Supplier not found.");
@@ -22,8 +22,7 @@ public class UpdateSupplier implements Command {
         }
 
         try{
-            Map<String, Object> query = getQuery(supplier);
-            supplier.update(query);
+            updateSupplier(supplier);
         }catch(Exception e){
             Printer.error(e.getMessage());
             return Result.FAILURE;
@@ -34,28 +33,27 @@ public class UpdateSupplier implements Command {
         return Result.SUCCESS;
     }
 
-    private Map<String, Object> getQuery(SupplierEntity supplier) throws Exception{
-        Map<String, Object> query = QueryBuilder.supplierQuery();
+    private void updateSupplier(SupplierEntity supplier) throws Exception{
         StringBuilder errorString = new StringBuilder();
 
-        for (Map.Entry<String, Object> entry : query.entrySet()){
-            String value = (String) entry.getValue();
-            String key = entry.getKey();
+        String name = ValidatedInputParser.parseString("name", false, 1, 15);
+        String phoneNumber = ValidatedInputParser.parseString("phone number", false, 1, 12);
+        String email = ValidatedInputParser.parseString("email", false, 1, 20);
 
-            SupplierEntity foundSupplier = supplierRepository.findOne(Map.of(key, value));
+        SupplierEntity nameSupplier = supplierRepository.findOne(QueryBuilder.supplierSearch(name, null, null));
+        SupplierEntity phoneSupplier = supplierRepository.findOne(QueryBuilder.supplierSearch(null, phoneNumber, null));
+        SupplierEntity emailSupplier = supplierRepository.findOne(QueryBuilder.supplierSearch(null, null, email));
 
-            if(!value.isEmpty()
-                    && foundSupplier != null
-                    && foundSupplier != supplier
-            ){
-                errorString.append("Invalid ").append(key).append(" update.\n");
-            }
-        }
+        if(!name.isEmpty() && nameSupplier != supplier) errorString.append("Invalid name update.\n");
+        if(!name.isEmpty() && phoneSupplier != supplier) errorString.append("Invalid phone number update.\n");
+        if(!name.isEmpty() && emailSupplier != supplier) errorString.append("Invalid email update.\n");
 
         if(!errorString.isEmpty()){
             throw new Exception(errorString + "Supplier already exists.");
         }
 
-        return query;
+        if (!name.isEmpty()) supplier.setName(name);
+        if (!phoneNumber.isEmpty()) supplier.setPhoneNumber(phoneNumber);
+        if (!email.isEmpty()) supplier.setEmail(email);
     }
 }

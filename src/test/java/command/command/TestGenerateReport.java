@@ -12,6 +12,7 @@ import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -27,7 +28,7 @@ public class TestGenerateReport {
 
     @BeforeClass
     public static void classSetUp() {
-        FindInventory.financialRepository.deleteMany(Map.of());
+        FindInventory.financialRepository.deleteMany(List.of(entity -> true));
         FindInventory.financialRepository.create(entity1);
         FindInventory.financialRepository.create(entity2);
         FindInventory.financialRepository.create(entity3);

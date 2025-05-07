@@ -16,6 +16,7 @@ import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -31,9 +32,9 @@ public class TestTakeDelivery {
 
     @BeforeClass
     public static void classSetUp() {
-        FindStockOrders.supplierPurchaseRepository.deleteMany(Map.of());
-        FindStockOrders.inventoryRepository.deleteMany(Map.of());
-        FindStockOrders.financialRepository.deleteMany(Map.of());
+        FindStockOrders.supplierPurchaseRepository.deleteMany(List.of(entity -> true));
+        FindStockOrders.inventoryRepository.deleteMany(List.of(entity -> true));
+        FindStockOrders.financialRepository.deleteMany(List.of(entity -> true));
 
         FindStockOrders.supplierPurchaseRepository.create(supplierPurchaseEntity);
         FindStockOrders.inventoryRepository.create(inventoryEntity);
@@ -46,8 +47,8 @@ public class TestTakeDelivery {
     public void testSetUp() {
         outContent.reset();
         supplierPurchaseEntity.setStatus(SupplierPurchaseEntity.Status.PENDING);
-        supplierPurchaseEntity.update(Map.of("itemName", "item1"));
-        financialEntity.update(Map.of("itemName", "item1"));
+        supplierPurchaseEntity.setItemName("item1");
+        financialEntity.setItemName("item1");
     }
 
     @Test
@@ -71,7 +72,7 @@ public class TestTakeDelivery {
             assertEquals(0.0, financialEntity.getTotalRevenue(), 0.01);
             assertEquals(-20.0, financialEntity.getProfit(), 0.01);
 
-            assertEquals(12, inventoryEntity.getQuantity());
+            assertEquals(12, (int) inventoryEntity.getQuantity());
         }
     }
 
@@ -114,7 +115,7 @@ public class TestTakeDelivery {
         try (
                 MockedStatic<InputParser> mockParser = org.mockito.Mockito.mockStatic(InputParser.class);
         ) {
-            supplierPurchaseEntity.update(Map.of("itemName", "some_item"));
+            supplierPurchaseEntity.setItemName("some_item");
             mockParser.when(() -> InputParser.parseString("Order ID", true)).thenReturn(supplierPurchaseEntity.getId());
 
             Command.Result result = command.execute();
@@ -131,7 +132,7 @@ public class TestTakeDelivery {
         try (
                 MockedStatic<InputParser> mockParser = org.mockito.Mockito.mockStatic(InputParser.class);
         ) {
-            financialEntity.update(Map.of("itemName", "nonexistent_item"));
+            financialEntity.setItemName("nonexistent_item");
             mockParser.when(() -> InputParser.parseString("Order ID", true)).thenReturn(supplierPurchaseEntity.getId());
 
             Command.Result result = command.execute();

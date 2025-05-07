@@ -2,110 +2,54 @@ package data.builder;
 
 import org.junit.Test;
 import org.mockito.MockedStatic;
-import putus.teddy.data.builder.QueryBuilder;
+import putus.teddy.data.builder.*;
+import putus.teddy.data.entity.CustomerPurchaseEntity;
+import putus.teddy.data.entity.InventoryEntity;
+import putus.teddy.data.entity.SupplierEntity;
+import putus.teddy.data.entity.SupplierPurchaseEntity;
 import putus.teddy.data.parser.InputParser;
-import putus.teddy.data.parser.ValidatedInputParser;
+
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class TestQueryBuilder {
     @Test
-    public void testSupplierQuery() {
-        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
-            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("Test name").thenReturn("Test phone").thenReturn("Test email");
+    public void testSupplierSearchQuery() {
+            List<Predicate<SupplierEntity>> query = QueryBuilder.supplierSearch("Test name", "Test phone", "Test email");
+            assertTrue("Test name", query.getFirst().test(new SupplierEntity("Test name", "Test phone", "Test email")));
 
-            var query = QueryBuilder.supplierQuery();
-            assertEquals("Test name", query.get("name"));
-            assertEquals("Test phone", query.get("phoneNumber"));
-            assertEquals("Test email", query.get("email"));
-        }
     }
 
     @Test
-    public void testSupplierQueryOptionalFields() {
-        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
-            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("");
+    public void testInventorySearchQuery() {
+            List<Predicate<InventoryEntity>> query = QueryBuilder.searchInventory("Test String", 6, 10.0);
+            assertTrue(query.getFirst().test(new InventoryEntity("Test String", 5, 10.0)));
+            assertFalse(query.get(1).test(new InventoryEntity("Test String", 5, 10.0)));
+            assertTrue(query.get(2).test(new InventoryEntity("Test String", 5, 10.0)));
 
-            var query = QueryBuilder.supplierQuery();
-            assertTrue(query.isEmpty());
-        }
-    }
-
-    @Test
-    public void testInventoryQuery() {
-        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
-            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("Test String");
-            utilities.when(() -> ValidatedInputParser.parseAmount(anyString(), anyBoolean())).thenReturn(10.0);
-            utilities.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(5);
-
-            var query = QueryBuilder.inventoryQuery();
-            assertEquals("Test String", query.get("itemName"));
-            assertEquals(5, query.get("quantity"));
-            assertEquals(10.0, query.get("pricePerUnit"));
-        }
-    }
-
-    @Test
-    public void testInventoryQueryOptionalFields() {
-        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
-            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("");
-            utilities.when(() -> ValidatedInputParser.parseAmount(anyString(), anyBoolean())).thenReturn(Double.MIN_VALUE);
-            utilities.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(Integer.MIN_VALUE);
-
-            var query = QueryBuilder.inventoryQuery();
-            assertTrue(query.isEmpty());
-        }
     }
 
     @Test
     public void testCustomerOrderQuery() {
-        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
-            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("Test customer").thenReturn("Test item");
-            utilities.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(5);
+            CustomerPurchaseEntity customerPurchase = new CustomerPurchaseEntity("Test customer", "Test item", 5, "2025-01-01");
 
-            var query = QueryBuilder.customerOrderQuery();
-            assertEquals("Test customer", query.get("customerName"));
-            assertEquals("Test item", query.get("itemName"));
-            assertEquals(5, query.get("quantity"));
-        }
+            List<Predicate<CustomerPurchaseEntity>> query = QueryBuilder.searchCustomerOrder("Test customer", "A different item", 5, "2025");
+
+            assertTrue(query.getFirst().test(customerPurchase));
+            assertFalse(query.get(1).test(customerPurchase));
+            assertTrue(query.get(2).test(customerPurchase));
+
     }
 
     @Test
-    public void testCustomerOrderQueryOptionalFields() {
-        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
-            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("");
-            utilities.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(Integer.MIN_VALUE);
-            utilities.when(() -> ValidatedInputParser.parseAmount(anyString(), anyBoolean())).thenReturn(Double.MIN_VALUE);
-
-            var query = QueryBuilder.customerOrderQuery();
-            assertTrue(query.isEmpty());
-        }
+    public void testSupplierPurchaseQuery() {
+            SupplierPurchaseEntity purchase = new SupplierPurchaseEntity("Test supplier", "2025-01-01", "Test Item", 5, 10.0);
+             List<Predicate<SupplierPurchaseEntity>> query = QueryBuilder.searchSupplierPurchase("Test supplier", "Some other item", 5, 10.0, "2025");
+            assertFalse(query.get(1).test(purchase));
     }
-
-    @Test
-    public void testCustomerOrderQueryWithDate() {
-        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
-            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("2023-10-01");
-            utilities.when(() -> ValidatedInputParser.parseAmount(anyString(), anyBoolean())).thenReturn(10.0);
-            utilities.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(5);
-
-            var query = QueryBuilder.customerOrderQuery();
-            assertEquals("2023-10-01", query.get("date"));
-        }
-    }
-
-    @Test
-    public void testCustomerOrderQueryWithEmptyDate() {
-        try (MockedStatic<ValidatedInputParser> utilities = mockStatic(ValidatedInputParser.class)) {
-            utilities.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("");
-            utilities.when(() -> ValidatedInputParser.parseAmount(anyString(), anyBoolean())).thenReturn(Double.MIN_VALUE);
-            utilities.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(Integer.MIN_VALUE);
-
-            var query = QueryBuilder.customerOrderQuery();
-            assertTrue(query.isEmpty());
-        }
-    }
-
 
 }

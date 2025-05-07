@@ -1,5 +1,6 @@
 package putus.teddy.command.command;
 
+import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
@@ -13,7 +14,7 @@ public class RegisterItem implements Command {
 
         InventoryEntity newItem = createInventoryEntity();
 
-        if (inventoryRepository.findOne(Map.of("itemName", newItem.getItemName())) != null) {
+        if (inventoryRepository.findOne(QueryBuilder.searchInventoryByItemName(newItem.getItemName())) != null) {
             Printer.error("Item already exists.");
             return Result.FAILURE;
         }

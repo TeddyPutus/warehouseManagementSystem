@@ -8,6 +8,7 @@ import org.mockito.MockedStatic;
 import putus.teddy.command.command.Command;
 import putus.teddy.command.command.CustomerOrder;
 import putus.teddy.command.command.RegisterItem;
+import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.CustomerPurchaseEntity;
 import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
@@ -16,6 +17,7 @@ import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -39,9 +41,9 @@ public class TestCustomerOrder {
     public void testSetUp() {
 
 
-        RegisterItem.inventoryRepository.deleteMany(Map.of());
-        RegisterItem.financialRepository.deleteMany(Map.of());
-        RegisterItem.customerPurchaseRepository.deleteMany(Map.of());
+        RegisterItem.inventoryRepository.deleteMany(List.of(entity -> true));
+        RegisterItem.financialRepository.deleteMany(List.of(entity -> true));
+        RegisterItem.customerPurchaseRepository.deleteMany(List.of(entity -> true));
 
         inventoryEntity = new InventoryEntity("item1", 1, 10.0);
         financialEntity = new FinancialEntity("item1", 0, 0, 10.0, 0.0);
@@ -67,10 +69,10 @@ public class TestCustomerOrder {
             assertEquals(Command.Result.SUCCESS, result);
 
             assertEquals(1, RegisterItem.customerPurchaseRepository.findAll().toList().size());
-            assertEquals(0, RegisterItem.inventoryRepository.findOne(Map.of("itemName", "item1")).getQuantity());
+            assertEquals(0, (int) RegisterItem.inventoryRepository.findOne(QueryBuilder.searchInventoryByItemName("item1")).getQuantity());
 
-            assertEquals(1, RegisterItem.financialRepository.findOne(Map.of("itemName", "item1")).getQuantitySold());
-            assertEquals(10.0, RegisterItem.financialRepository.findOne(Map.of("itemName", "item1")).getTotalRevenue(), 0.001);
+            assertEquals(1, (int) RegisterItem.financialRepository.findOne(QueryBuilder.searchFinancial("item1")).getQuantitySold());
+            assertEquals(10.0, RegisterItem.financialRepository.findOne(QueryBuilder.searchFinancial("item1")).getTotalRevenue(), 0.001);
         }
     }
 
@@ -91,7 +93,7 @@ public class TestCustomerOrder {
             assertEquals(Command.Result.FAILURE, result);
 
             assertEquals(0, RegisterItem.customerPurchaseRepository.findAll().toList().size());
-            assertEquals(1, RegisterItem.inventoryRepository.findOne(Map.of("itemName", "item1")).getQuantity());
+            assertEquals(1, (int) RegisterItem.inventoryRepository.findOne(QueryBuilder.searchInventoryByItemName("item1")).getQuantity());
         }
     }
 
@@ -146,7 +148,7 @@ public class TestCustomerOrder {
             mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
             mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(1);
 
-            CustomerOrder.financialRepository.deleteMany(Map.of());
+            CustomerOrder.financialRepository.deleteMany(List.of(entity -> true));
 
             Command.Result result = command.execute();
             assertEquals(Command.Result.FAILURE, result);

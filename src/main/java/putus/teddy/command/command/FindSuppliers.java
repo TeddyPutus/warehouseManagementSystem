@@ -3,6 +3,7 @@ package putus.teddy.command.command;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.DataEntity;
 import putus.teddy.data.entity.SupplierEntity;
+import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
 public class FindSuppliers implements Command {
@@ -10,7 +11,11 @@ public class FindSuppliers implements Command {
          Printer.info("Finding Suppliers, please enter optional filter values...");
 
          Printer.printTable(
-                 supplierRepository.findMany(QueryBuilder.supplierQuery()).map(entity -> (DataEntity) entity),
+                 supplierRepository.findMany(QueryBuilder.supplierSearch(
+                            ValidatedInputParser.parseString("name", false, 1, 15),
+                            ValidatedInputParser.parseString("phone number", false, 1, 12),
+                            ValidatedInputParser.parseString("email", false, 1, 20)
+                 )).map(entity -> (DataEntity) entity),
                  SupplierEntity.getTableHead()
          );
 

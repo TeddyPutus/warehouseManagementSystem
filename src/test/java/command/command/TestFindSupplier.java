@@ -10,13 +10,17 @@ import putus.teddy.command.command.FindInventory;
 import putus.teddy.command.command.FindSuppliers;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
+import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class TestFindSupplier {
     static ByteArrayOutputStream outContent;
@@ -28,7 +32,7 @@ public class TestFindSupplier {
 
     @BeforeClass
     public static void classSetUp() {
-        FindInventory.supplierRepository.deleteMany(Map.of());
+        FindInventory.supplierRepository.deleteMany(List.of(entity -> true));
         FindInventory.supplierRepository.create(entity1);
         FindInventory.supplierRepository.create(entity2);
         FindInventory.supplierRepository.create(entity3);
@@ -39,10 +43,10 @@ public class TestFindSupplier {
     @Test
     public void testFindSupplier() {
 
-        try (MockedStatic<QueryBuilder> mockedBuilder = org.mockito.Mockito.mockStatic(QueryBuilder.class)) {
-            mockedBuilder.when(QueryBuilder::supplierQuery).thenReturn(Map.of(
-                    "phoneNumber", "1234"
-            ));
+        try (MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class)) {
+            mockParser.when(()-> ValidatedInputParser.parseString("name", false,1,15)).thenReturn("");
+            mockParser.when(()-> ValidatedInputParser.parseString("phone number", false,1,12)).thenReturn("1234");
+            mockParser.when(()-> ValidatedInputParser.parseString("email", false,1,20)).thenReturn("");
 
             Command.Result result = command.execute();
             assertEquals(Command.Result.SUCCESS, result);
@@ -60,11 +64,12 @@ public class TestFindSupplier {
 
     @Test
     public void testFindInventoryWithNoResults() {
-        try (MockedStatic<QueryBuilder> mockedBuilder = org.mockito.Mockito.mockStatic(QueryBuilder.class)) {
-
-            mockedBuilder.when(QueryBuilder::supplierQuery).thenReturn(Map.of(
-                    "phoneNumber", "9999"
-            ));
+        try (MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class)) {
+            mockParser.when(()-> ValidatedInputParser.parseString("name", false,1,15)).thenReturn("");
+            mockParser.when(()-> ValidatedInputParser.parseString("phone number", false,1,12)).thenReturn("9999");
+            mockParser.when(()-> ValidatedInputParser.parseString("email", false,1,20)).thenReturn("");
+            mockParser.when(()-> ValidatedInputParser.parseAmount(anyString(),anyBoolean())).thenReturn(Double.MIN_VALUE);
+            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(10);
 
             Command.Result result = command.execute();
             assertEquals(Command.Result.SUCCESS, result);
