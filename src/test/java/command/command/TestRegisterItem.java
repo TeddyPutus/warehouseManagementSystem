@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import putus.teddy.command.command.Command;
 import putus.teddy.command.command.RegisterItem;
 
 import putus.teddy.data.entity.InventoryEntity;
@@ -47,13 +48,14 @@ public class TestRegisterItem {
             mockParser.when(()-> ValidatedInputParser.parseString(anyString(),anyBoolean(),anyInt(),anyInt())).thenReturn("item1");
             mockParser.when(()-> ValidatedInputParser.parseAmount(anyString(),anyBoolean())).thenReturn(0.0);
 
-            boolean result = command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.FAILURE, result);
+
             String output = outContent.toString();
             assertTrue(output.contains("Item already exists."));
             assertFalse(output.contains("Item registered successfully."));
             assertEquals(1, RegisterItem.inventoryRepository.findAll().toList().size());
             assertNull(RegisterItem.financialRepository.findOne(Map.of("itemName", "item1")));
-            assertFalse(result);
         }
     }
 
@@ -65,7 +67,8 @@ public class TestRegisterItem {
             mockParser.when(()-> ValidatedInputParser.parseString(anyString(),anyBoolean(),anyInt(),anyInt())).thenReturn("item2");
             mockParser.when(()-> ValidatedInputParser.parseAmount(anyString(),anyBoolean())).thenReturn(0.0);
 
-            boolean result = command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
 
             String output = outContent.toString();
             assertTrue(output.contains("Item registered successfully."));
@@ -73,7 +76,6 @@ public class TestRegisterItem {
             assertEquals(2, RegisterItem.inventoryRepository.findAll().toList().size());
             assertNotNull(RegisterItem.inventoryRepository.findOne(Map.of("itemName", "item2")));
             assertNotNull(RegisterItem.financialRepository.findOne(Map.of("itemName", "item2")));
-            assertFalse(result);
         }
     }
 

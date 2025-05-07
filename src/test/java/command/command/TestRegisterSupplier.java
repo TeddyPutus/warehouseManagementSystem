@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import putus.teddy.command.command.Command;
 import putus.teddy.command.command.RegisterSupplier;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
@@ -44,12 +45,13 @@ public class TestRegisterSupplier {
         ) {
             mockParser.when(()-> ValidatedInputParser.parseString(anyString(),anyBoolean(),anyInt(),anyInt())).thenReturn("supplier").thenReturn("5678").thenReturn("email");
 
-            boolean result = command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.FAILURE, result);
+
             String output = outContent.toString();
             assertTrue(output.contains("Supplier already exists."));
             assertFalse(output.contains("Supplier registered successfully."));
             assertEquals(1, RegisterSupplier.supplierRepository.findAll().toList().size());
-            assertFalse(result);
         }
     }
 
@@ -60,13 +62,14 @@ public class TestRegisterSupplier {
         ) {
             mockParser.when(()-> ValidatedInputParser.parseString(anyString(),anyBoolean(),anyInt(),anyInt())).thenReturn("supplier2").thenReturn("5678").thenReturn("email");
 
-            boolean result = command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
+
             String output = outContent.toString();
             assertFalse(output.contains("Supplier already exists."));
             assertTrue(output.contains("Supplier registered successfully."));
             assertEquals(2, RegisterSupplier.supplierRepository.findAll().toList().size());
             assertNotNull(RegisterSupplier.supplierRepository.findOne(Map.of("name", "supplier2")));
-            assertFalse(result);
         }
     }
 }

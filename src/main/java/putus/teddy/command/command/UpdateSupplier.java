@@ -11,14 +11,14 @@ import java.util.Map;
 
 public class UpdateSupplier implements Command {
 
-    public boolean execute() {
+    public Result execute() {
         Printer.info("Updating supplier information...");
         String supplierId = ValidatedInputParser.parseString("Supplier ID", true, 1, 36);
         SupplierEntity supplier = supplierRepository.findOne(Map.of("id", supplierId));
 
         if (supplier == null) {
             Printer.warning("Supplier not found.");
-            return false;
+            return Result.FAILURE;
         }
 
         try{
@@ -26,12 +26,12 @@ public class UpdateSupplier implements Command {
             supplier.update(query);
         }catch(Exception e){
             Printer.error(e.getMessage());
-            return false;
+            return Result.FAILURE;
         }
 
         Printer.success("Supplier information updated successfully.");
 
-        return false;
+        return Result.SUCCESS;
     }
 
     private Map<String, Object> getQuery(SupplierEntity supplier) throws Exception{

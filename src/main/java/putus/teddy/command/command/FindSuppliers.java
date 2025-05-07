@@ -6,7 +6,7 @@ import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.printer.Printer;
 
 public class FindSuppliers implements Command {
-     public boolean execute() {
+     public Result execute() {
          Printer.info("Finding Suppliers, please enter optional filter values...");
 
          Printer.printTable(
@@ -14,6 +14,6 @@ public class FindSuppliers implements Command {
                  SupplierEntity.getTableHead()
          );
 
-         return false;
+         return Result.SUCCESS;
      }
 }

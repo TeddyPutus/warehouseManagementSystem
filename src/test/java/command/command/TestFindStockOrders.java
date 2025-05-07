@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import putus.teddy.command.command.Command;
 import putus.teddy.command.command.FindStockOrders;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierPurchaseEntity;
@@ -14,8 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestFindStockOrders {
     static ByteArrayOutputStream outContent;
@@ -49,7 +49,8 @@ public class TestFindStockOrders {
                     "supplierName", "Supplier A"
             ));
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
             String output = outContent.toString();
 
             assertTrue(output.contains(SupplierPurchaseEntity.getTableHead()));
@@ -69,7 +70,8 @@ public class TestFindStockOrders {
                     "name", "Supplier Z" //Incorrect field name and value
             ));
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
 
             assertFalse(outContent.toString().contains(entity1.getSupplierName()));
             assertFalse(outContent.toString().contains(entity2.getSupplierName()));

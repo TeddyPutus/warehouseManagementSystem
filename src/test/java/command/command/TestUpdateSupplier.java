@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import putus.teddy.command.command.Command;
 import putus.teddy.command.command.UpdateSupplier;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
@@ -49,7 +50,9 @@ public class TestUpdateSupplier {
                     "phoneNumber", "5678"
             ));
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
+
             String output = outContent.toString();
             assertFalse(output.contains("Supplier not found."));
             assertTrue(output.contains("Supplier information updated successfully."));
@@ -64,7 +67,9 @@ public class TestUpdateSupplier {
                     () -> InputParser.parseString("Supplier ID", true)
             ).thenReturn("non-existing-id");
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.FAILURE, result);
+
             String output = outContent.toString();
             assertTrue(output.contains("Supplier not found."));
             assertFalse(output.contains("Supplier information updated successfully."));

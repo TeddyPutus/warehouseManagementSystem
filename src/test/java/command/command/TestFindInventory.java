@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import putus.teddy.command.command.Command;
 import putus.teddy.command.command.FindInventory;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.InventoryEntity;
@@ -14,12 +15,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestFindInventory {
     static ByteArrayOutputStream outContent;
-    FindInventory findInventoryCommand = new FindInventory();
+    FindInventory command = new FindInventory();
 
     static InventoryEntity inventoryEntity1 = new InventoryEntity("item1", 10, 5.0);
     static InventoryEntity inventoryEntity2 = new InventoryEntity("item2", 20, 10.0);
@@ -44,7 +44,8 @@ public class TestFindInventory {
                     "quantity", 10
             ));
 
-            findInventoryCommand.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
 
             assertTrue(outContent.toString().contains(InventoryEntity.getTableHead()));
             assertTrue(outContent.toString().contains(inventoryEntity1.getItemName()));
@@ -60,7 +61,8 @@ public class TestFindInventory {
                     "quantity", 10000
             ));
 
-            findInventoryCommand.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
 
             assertFalse(outContent.toString().contains(inventoryEntity1.getTableRow()));
             assertFalse(outContent.toString().contains(inventoryEntity2.getTableRow()));

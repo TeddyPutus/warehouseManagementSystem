@@ -8,14 +8,14 @@ import putus.teddy.printer.Printer;
 import java.util.Map;
 
 public class RegisterItem implements Command {
-    public boolean execute() {
+    public Result execute() {
         Printer.info("Registering item...");
 
         InventoryEntity newItem = createInventoryEntity();
 
         if (inventoryRepository.findOne(Map.of("itemName", newItem.getItemName())) != null) {
             Printer.error("Item already exists.");
-            return false;
+            return Result.FAILURE;
         }
 
         FinancialEntity financialEntity = new FinancialEntity(newItem.getItemName(), newItem.getQuantity(), 0, 0.0, 0.0);
@@ -25,7 +25,7 @@ public class RegisterItem implements Command {
 
         Printer.success("Item registered successfully.");
 
-        return false;
+        return Result.SUCCESS;
     }
 
     private InventoryEntity createInventoryEntity() {

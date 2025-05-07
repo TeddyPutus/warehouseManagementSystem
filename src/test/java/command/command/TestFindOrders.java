@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import putus.teddy.command.command.Command;
 import putus.teddy.command.command.FindInventory;
 import putus.teddy.command.command.FindOrders;
 import putus.teddy.data.builder.QueryBuilder;
@@ -15,8 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestFindOrders {
     static ByteArrayOutputStream outContent;
@@ -50,7 +50,8 @@ public class TestFindOrders {
                     "itemName", "item1"
             ));
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
 
             String output = outContent.toString();
 
@@ -71,7 +72,8 @@ public class TestFindOrders {
                     "phoneNumber", "9999"
             ));
 
-            command.execute();
+            Command.Result result = command.execute();
+            assertEquals(Command.Result.SUCCESS, result);
 
             assertFalse(outContent.toString().contains(entity1.getCustomerName()));
             assertFalse(outContent.toString().contains(entity2.getCustomerName()));

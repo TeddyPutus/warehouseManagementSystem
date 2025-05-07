@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class CustomerOrder implements Command {
 
-    public boolean execute() {
+    public Result execute() {
         Printer.info("Taking customer order...");
         CustomerPurchaseEntity newOrder;
 
@@ -24,12 +24,12 @@ public class CustomerOrder implements Command {
             updateFinancialEntity(newOrder);
         } catch (Exception e) {
             Printer.error(e.getMessage());
-            return false;
+            return Result.FAILURE;
         }
 
         customerPurchaseRepository.create(newOrder);
         Printer.success("Order placed successfully. Order ID is " + newOrder.getId());
-        return false;
+        return Result.SUCCESS;
     }
 
     private CustomerPurchaseEntity createCustomerPurchaseEntity() {

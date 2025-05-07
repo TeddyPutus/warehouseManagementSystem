@@ -1,6 +1,7 @@
 package putus.teddy;
 
 import putus.teddy.command.command.Command;
+import putus.teddy.command.command.Exit;
 import putus.teddy.command.parser.CommandParser;
 import putus.teddy.printer.Printer;
 import putus.teddy.data.entity.*;
@@ -15,14 +16,14 @@ public class Main {
 
         CommandRegistry commandRegistry = new CommandRegistry();
 
-        boolean finished = false;
+        Command.Result finished = Command.Result.SUCCESS;
 
         Printer.logo();
 
         Printer.success("Welcome to BNU Industries!");
         Printer.success("Type help to see the list of commands.");
 
-        while (!finished) {
+        while (finished != Command.Result.EXIT) {
             finished = commandRegistry.processCommand(CommandParser.parseCommand());
         }
     }
