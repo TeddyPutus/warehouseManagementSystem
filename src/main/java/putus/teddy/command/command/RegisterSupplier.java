@@ -1,6 +1,7 @@
 package putus.teddy.command.command;
 
 
+import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
@@ -15,7 +16,7 @@ public class RegisterSupplier implements Command {
 
         SupplierEntity newSupplier = createSupplierEntity();
 
-        if(supplierRepository.findOne(Map.of("name", newSupplier.getName())) != null) {
+        if(supplierRepository.findOne(QueryBuilder.supplierSearchByName(newSupplier.getName())) != null) {
             Printer.error("Supplier already exists.");
             return Result.FAILURE;
         }

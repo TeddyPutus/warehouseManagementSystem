@@ -2,11 +2,13 @@ package data.repository;
 
 import org.junit.Before;
 import org.junit.Test;
+import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.repository.InMemoryRepository;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
@@ -27,10 +29,8 @@ public class InMemoryRepositoryTest {
 
     @Test
     public void testFindOne() {
-        HashMap<String, Object> query = new HashMap<>();
-        query.put("name", "Supplier A");
 
-        SupplierEntity supplier = repository.findOne(query);
+        SupplierEntity supplier = repository.findOne(QueryBuilder.supplierSearchByName("Supplier A"));
 
         assertEquals("Supplier A", supplier.getName());
         assertEquals("123-456-7890", supplier.getPhoneNumber());
@@ -39,10 +39,8 @@ public class InMemoryRepositoryTest {
 
     @Test
     public void testFindOneReturnsNull() {
-        HashMap<String, Object> query = new HashMap<>();
-        query.put("name", "Nonexistent Supplier");
 
-        SupplierEntity supplier = repository.findOne(query);
+        SupplierEntity supplier = repository.findOne(QueryBuilder.supplierSearchByName("Nonexistent Supplier"));
 
         assertNull("Supplier should not exist", supplier);
     }
@@ -53,12 +51,7 @@ public class InMemoryRepositoryTest {
 
         boolean created = repository.create(newSupplier);
         assertTrue("New supplier should be added successfully", created);
-
-
-        HashMap<String, Object> query = new HashMap<>();
-        query.put("name", "Supplier D");
-
-        SupplierEntity supplier = repository.findOne(query);
+        SupplierEntity supplier = repository.findOne(QueryBuilder.supplierSearchByName("Supplier D"));
 
         assertEquals("Supplier D", supplier.getName());
     }
@@ -69,21 +62,16 @@ public class InMemoryRepositoryTest {
         SupplierEntity newSupplier = new SupplierEntity("Supplier D", "123-456-7890", "supplier_d@email.com");
         repository.create(newSupplier);
 
-        HashMap<String, Object> query = new HashMap<>();
-        query.put("name", "Supplier D");
-
-        boolean deleted = repository.deleteOne(query);
+        boolean deleted = repository.deleteOne(QueryBuilder.supplierSearchByName("Supplier D"));
         assertTrue("Supplier D should be deleted successfully", deleted);
 
-        SupplierEntity supplier = repository.findOne(query);
+        SupplierEntity supplier = repository.findOne(QueryBuilder.supplierSearchByName("Supplier D"));
         assertNull("Supplier D should no longer exist", supplier);
     }
 
     @Test
     public void testDeleteSupplierReturnsFalse(){
-        HashMap<String, Object> query = new HashMap<>();
-        query.put("name", "Nonexistent Supplier");
-        assertFalse("Deleting a nonexistent supplier should return false", repository.deleteOne(query));
+        assertFalse("Deleting a nonexistent supplier should return false", repository.deleteOne(QueryBuilder.supplierSearchByName("Nonexistent Supplier")));
     }
 
     @Test
@@ -96,16 +84,12 @@ public class InMemoryRepositoryTest {
         repository.create(newSupplier2);
         repository.create(newSupplier3);
 
-
-        HashMap<String, Object> query = new HashMap<>();
-        query.put("name", "Supplier Z");
-
-        Stream<SupplierEntity> suppliers = repository.findMany(query);
+        Stream<SupplierEntity> suppliers = repository.findMany(QueryBuilder.supplierSearchByName("Supplier Z"));
         assertEquals(3, suppliers.count());
 
         assertEquals(
                 "List should equal all Supplier Z entries",
-                repository.findMany(query).toList(), List.of(
+                repository.findMany(QueryBuilder.supplierSearchByName("Supplier Z")).toList(), List.of(
                         newSupplier1,
                         newSupplier2,
                         newSupplier3
@@ -116,10 +100,8 @@ public class InMemoryRepositoryTest {
 
     @Test
     public void testFindManyReturnsEmptyStream() {
-        HashMap<String, Object> query = new HashMap<>();
-        query.put("name", "Nonexistent Supplier");
 
-        Stream<SupplierEntity> suppliers = repository.findMany(query);
+        Stream<SupplierEntity> suppliers = repository.findMany(QueryBuilder.supplierSearchByName("Nonexistent Supplier"));
         assertEquals(0, suppliers.count());
     }
 
@@ -134,8 +116,7 @@ public class InMemoryRepositoryTest {
         repository.create(newSupplier3);
 
 
-        HashMap<String, Object> query = new HashMap<>();
-        query.put("name", "Supplier Z");
+        List<Predicate<SupplierEntity>> query = QueryBuilder.supplierSearchByName("Supplier Z");
 
         int deletedCount = repository.deleteMany(query);
         assertEquals(3, deletedCount);
@@ -146,9 +127,9 @@ public class InMemoryRepositoryTest {
 
     @Test
     public void testDeleteManyReturnsZero(){
-        HashMap<String, Object> query = new HashMap<>();
-        query.put("name", "Nonexistent Supplier");
+        List<Predicate<SupplierEntity>> query = QueryBuilder.supplierSearchByName("Nonexistent Supplier");
         assertEquals(0, repository.deleteMany(query));
+
     }
 
     @Test

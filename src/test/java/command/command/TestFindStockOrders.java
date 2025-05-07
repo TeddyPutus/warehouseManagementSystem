@@ -9,13 +9,17 @@ import putus.teddy.command.command.Command;
 import putus.teddy.command.command.FindStockOrders;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierPurchaseEntity;
+import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class TestFindStockOrders {
     static ByteArrayOutputStream outContent;
@@ -27,7 +31,7 @@ public class TestFindStockOrders {
 
     @BeforeClass
     public static void classSetUp() {
-        FindStockOrders.supplierPurchaseRepository.deleteMany(Map.of());
+        FindStockOrders.supplierPurchaseRepository.deleteMany(List.of(entity -> true));
         FindStockOrders.supplierPurchaseRepository.create(entity1);
         FindStockOrders.supplierPurchaseRepository.create(entity2);
         FindStockOrders.supplierPurchaseRepository.create(entity3);
@@ -44,10 +48,13 @@ public class TestFindStockOrders {
     @Test
     public void testFindOrders() {
 
-        try (MockedStatic<QueryBuilder> mockedBuilder = org.mockito.Mockito.mockStatic(QueryBuilder.class)) {
-            mockedBuilder.when(QueryBuilder::supplierPurchaseQuery).thenReturn(Map.of(
-                    "supplierName", "Supplier A"
-            ));
+        try (MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class)) {
+            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("Supplier A");
+            mockParser.when(()-> ValidatedInputParser.parseString("itemName", true,1,15)).thenReturn("");
+            mockParser.when(()-> ValidatedInputParser.parseString("date", true,1,15)).thenReturn("");
+            mockParser.when(()-> ValidatedInputParser.parseAmount(anyString(),anyBoolean())).thenReturn(Double.MIN_VALUE);
+            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(10);
+
 
             Command.Result result = command.execute();
             assertEquals(Command.Result.SUCCESS, result);
@@ -64,11 +71,12 @@ public class TestFindStockOrders {
 
     @Test
     public void testFindOrdersWithNoResults() {
-        try (MockedStatic<QueryBuilder> mockedBuilder = org.mockito.Mockito.mockStatic(QueryBuilder.class)) {
-
-            mockedBuilder.when(QueryBuilder::supplierPurchaseQuery).thenReturn(Map.of(
-                    "name", "Supplier Z" //Incorrect field name and value
-            ));
+        try (MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class)) {
+            mockParser.when(()-> ValidatedInputParser.parseString("name", false,1,15)).thenReturn("Supplier Z");
+            mockParser.when(()-> ValidatedInputParser.parseString("itemName", false,1,15)).thenReturn("");
+            mockParser.when(()-> ValidatedInputParser.parseString("date", false,1,15)).thenReturn("");
+            mockParser.when(()-> ValidatedInputParser.parseAmount(anyString(),anyBoolean())).thenReturn(Double.MIN_VALUE);
+            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(10);
 
             Command.Result result = command.execute();
             assertEquals(Command.Result.SUCCESS, result);

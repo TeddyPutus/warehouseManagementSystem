@@ -13,6 +13,7 @@ import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -26,7 +27,7 @@ public class TestRegisterSupplier {
 
     @BeforeClass
     public static void classSetUp() {
-        RegisterSupplier.supplierRepository.deleteMany(Map.of());
+        RegisterSupplier.supplierRepository.deleteMany(List.of(entity -> true));
         RegisterSupplier.supplierRepository.create(entity1);
         outContent = new ByteArrayOutputStream();
         Printer.setOutputStream(new PrintStream(outContent));
@@ -69,7 +70,7 @@ public class TestRegisterSupplier {
             assertFalse(output.contains("Supplier already exists."));
             assertTrue(output.contains("Supplier registered successfully."));
             assertEquals(2, RegisterSupplier.supplierRepository.findAll().toList().size());
-            assertNotNull(RegisterSupplier.supplierRepository.findOne(Map.of("name", "supplier2")));
+            assertNotNull(RegisterSupplier.supplierRepository.findOne(List.of(entity -> entity.getName().equals("supplier2"))));
         }
     }
 }

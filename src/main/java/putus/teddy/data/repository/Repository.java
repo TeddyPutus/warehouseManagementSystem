@@ -1,20 +1,21 @@
 package putus.teddy.data.repository;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public interface Repository<T> {
     boolean create(T entity);
 
-    T findOne(Map<String,Object> query);
-
-    Stream<T> findMany(Map<String,Object> query);
-
     Stream<T> findAll();
 
-    boolean update(T entity, Map<String,Object> query);
+    T findOne(List<Predicate<T>> query);
 
-    boolean deleteOne(Map<String,Object> query);
+    Stream<T> findMany(List<Predicate<T>> query);
 
-    int deleteMany(Map<String,Object> query);
+    boolean deleteOne(List<Predicate<T>> query);
+
+    int deleteMany(List<Predicate<T>> query);
 }

@@ -5,6 +5,8 @@ import putus.teddy.data.entity.DataEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class InMemoryRepository<T extends DataEntity> implements Repository<T>{
@@ -18,43 +20,45 @@ public class InMemoryRepository<T extends DataEntity> implements Repository<T>{
         return entities.add(entity);
     }
 
-    public T findOne(Map<String,Object> query) {
-        return entities.stream()
-                .filter(entity -> entity.matches(query))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public Stream<T> findMany(Map<String,Object> query) {
-        return entities.stream()
-                .filter(entity -> entity.matches(query));
-    }
-
     public Stream<T> findAll() {
         return entities.stream();
     }
 
-    public boolean update(T entity, Map<String,Object> query) {
+    public T findOne(List<Predicate<T>> query) {
         try {
-            entity.update(query);
-            return true;
+            return findMany(query)
+                    .findFirst()
+                    .orElse(null);
         } catch (Exception e) {
-            return false;
+            System.out.println("Error finding entity: " + e.getMessage());
+            return null;
         }
     }
 
-    public boolean deleteOne(Map<String,Object> query) {
-        T entity = findOne(query);
-        if (entity != null) {
-            entities.remove(entity);
-            return true;
+    public Stream<T> findMany(List<Predicate<T>> predicates) {
+        try {
+            return entities.stream()
+                    .filter(entity -> predicates.stream().allMatch(predicate -> predicate.test(entity)));
+        } catch (Exception e) {
+            System.out.println("Error finding entities: " + e.getMessage());
+            return Stream.empty();
         }
-        return false;
     }
 
-    public int deleteMany(Map<String,Object> query) {
+    public boolean deleteOne(List<Predicate<T>> query) {
+        return entities.remove(findOne(query));
+    }
+
+    public int deleteMany(List<Predicate<T>> query) {
         int initialSize = entities.size();
-        entities.removeIf(supplier -> supplier.matches(query));
+
+        try{
+            entities.removeIf(entity -> query.stream().allMatch(predicate -> predicate.test(entity)));
+        } catch (Exception e) {
+            System.out.println("Error deleting entities: " + e.getMessage());
+            return 0;
+        }
+
         return initialSize - entities.size();
     }
 }

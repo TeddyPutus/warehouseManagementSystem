@@ -27,49 +27,6 @@ public class CustomerPurchaseEntityTest {
     }
 
     @Test
-    public void testUpdate() {
-        HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("customerName", "John");
-        queryMap.put("itemName", "Item2");
-        queryMap.put("totalPrice", 200.0);
-        queryMap.put("purchaseDate", "2023-10-02");
-        queryMap.put("quantity", 5);
-
-        customerPurchase.update(queryMap);
-
-        assertEquals("John", customerPurchase.getCustomerName());
-        assertEquals("Item2", customerPurchase.getItemName());
-        assertEquals(5, customerPurchase.getQuantity());
-        assertEquals(200.0, customerPurchase.getTotalPrice(), 0.0);
-        assertEquals("2023-10-02", customerPurchase.getPurchaseDate());
-    }
-
-    @Test
-    public void testMatches() {
-        HashMap<String, Object> queryMap = new HashMap<>();
-
-        customerPurchase.setTotalPrice(20.0);
-
-        queryMap.put("purchaseDate", "2023-10-01");
-        queryMap.put("quantity", 100);
-        queryMap.put("totalPrice", 20.0);
-
-        assertTrue(customerPurchase.matches(queryMap));
-
-        queryMap.put("id", 2);
-        assertFalse(customerPurchase.matches(queryMap));
-    }
-
-    @Test
-    public void testDoesNotMatch() {
-        HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("customerId", 1);
-        queryMap.put("totalPrice", 200);
-
-        assertFalse(customerPurchase.matches(queryMap));
-    }
-
-    @Test
     public void testPrintTableHead() {
         String expectedOutput = "| ID                                   | CUSTOMER NAME   | PURCHASED ITEM       |    QUANTITY | TOTAL PRICE | PURCHASE DATE        |";
         assertTrue(CustomerPurchaseEntity.getTableHead().contains(expectedOutput));
