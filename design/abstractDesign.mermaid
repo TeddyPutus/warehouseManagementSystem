@@ -1,0 +1,58 @@
+---
+title: Class Diagram
+---
+classDiagram
+    class Command {
+        +Result execute()
+    }
+
+    class Repository {
+        +bool create()
+        +T findOne()
+        +Stream findAll()
+        +Stream findMany()
+        +bool update()
+        +bool deleteOne()
+        +int deleteMany()
+    }
+
+    class DataEntity {
+        +getTableHead()
+        +getTableRow()
+        +gettersAndSetters()
+    }
+
+    class QueryBuilder{
+        +Map buildQuery()
+    }
+
+    class CommandParser {
+        +getCommand()
+    }
+
+    class InputParser{
+        +String parseString()
+        +Int parseInt()
+        +Double parseDouble()
+    }
+
+    class ValidatedInputParser{
+        +String parseString()
+        +Int parseQuantity()
+        +Double parseAmount()
+    }
+
+    class Printer{
+
+    }
+
+    InputParser --|> ValidatedInputParser: Extends
+    ValidatedInputParser --> Command
+    Command --> Printer
+    QueryBuilder --> Command: Creates hashmaps
+    Repository <--> Command: Command sends querys/entities,\nReceives Entities
+    DataEntity .. Repository: Stores
+    DataEntity .. Command: Uses
+    CommandRegistry *-- Command: Contains Map of Commands
+    CommandParser --|> CommandRegistry: Uses to select command
+    note "NOTE: Implementations of Command\n may use multiple repositories as needed."

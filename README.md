@@ -71,3 +71,7 @@ Valid commands are:
 - FIND_STOCK_ORDERS: Find stock orders
 - FINANCIAL_REPORT: Generate a financial report
 - UPDATE_SUPPLIER_INFO: Update existing supplier information
+
+## System Design
+
+See [Design documentation](design/design.md) for the system design.
