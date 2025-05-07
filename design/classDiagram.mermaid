@@ -1,0 +1,87 @@
+---
+title: Class Diagram
+---
+classDiagram
+    class Command {
+        +Result execute()
+    }
+
+    class Repository{
+        +bool create()
+        +bool createMany()
+        +T findOne()
+        +Stream findAll()
+        +Stream findMany()
+        +bool deleteOne()
+        +int deleteMany()
+    }
+
+    class InMemoryRepository {
+    }
+
+    class DataEntity {
+        +String getTableHead()
+        +String getTableRow()
+        +gettersAndSetters(): As needed for concrete implementation
+    }
+
+    class QueryBuilder{
+        +List searchSupplier()
+        +List searchSupplierById()
+        +List searchSupplierByName()
+        +List searchInventory()
+        +List searchInventoryByItemName()
+        +List searchCustomerOrder()
+        +List searchSupplierPurchase()
+        +List searchSupplierPurchaseById()
+        +List searchFinancial()
+        -bool isEmptyString()
+        -bool isEmptyInteger()
+        -bool isEmptyDouble()
+    }
+
+    class CommandParser {
+        +CommandType getCommand()
+    }
+
+    class InputParser{
+        +String parseString()
+        +Int parseInt()
+        +Double parseDouble()
+    }
+
+    class ValidatedInputParser{
+        +String parseString()
+        +Int parseQuantity()
+        +Double parseAmount()
+    }
+
+    class Printer{
+        +void info()
+        +void infoLine()
+        +void error()
+        +void success()
+        +void warning()
+        +void alert()
+        +void logo()
+        +void printTable()
+        -void printTableHead()
+        +public void setOutputStream()
+    }
+
+    class CommandRegistry {
+        +Result processCommand()
+    }
+
+    Repository --|> InMemoryRepository: Implements, T = DataEntity
+    InputParser --|> ValidatedInputParser: Extends
+    ValidatedInputParser --> Printer
+    ValidatedInputParser --> Command
+    Command --> Printer
+    QueryBuilder --> Command: Creates predicates
+    InMemoryRepository <--> Command: Command sends querys/entities,\nReceives Entities
+    DataEntity .. InMemoryRepository: Stores
+    DataEntity .. Command: Uses
+    CommandRegistry *-- Command: Contains Map of Commands
+    CommandParser --|> CommandRegistry: Uses to select command
+    note "NOTE: Implementations of Command\n may use multiple repositories as needed."

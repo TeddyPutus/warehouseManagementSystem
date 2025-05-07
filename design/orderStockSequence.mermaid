@@ -1,0 +1,32 @@
+---
+title: Search Diagram
+---
+
+sequenceDiagram
+    actor u as User
+    participant i as ValidatedInputParser
+    participant q as QueryBuilder
+    participant c as Command
+    participant sr as Supplier Repository
+    participant ir as Inventory Repository
+    participant spr as Supplier Purchase Repository
+    participant p as Printer
+
+    loop for each purchase criteria [supplier name, item name, quantity, price]
+        i ->> p: "Enter criteria"
+        p ->> u: "Enter search criteria"
+        u ->> i: searchCriteria
+    end
+
+    note left of c: New order entity created
+    c ->> q: inventory query & supplier query
+    q ->> ir: search inventory
+    q ->> sr: search suppliers
+    alt item or supplier does not exist
+        ir ->> c: not found
+        c ->> p: "not found"
+        p ->> u: "not found"
+    else item and supplier exist
+        c ->> spr: new order
+        c ->> p: Success
+    end
