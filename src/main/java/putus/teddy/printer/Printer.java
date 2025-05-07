@@ -67,7 +67,7 @@ public class Printer {
         outputStream.println(BLUE + logo + RESET);
     }
 
-    public static void printTableHead(String tableHead) {
+    private static void printTableHead(String tableHead) {
         info("-".repeat(tableHead.length()));
         info(tableHead);
         info("-".repeat(tableHead.length()));
