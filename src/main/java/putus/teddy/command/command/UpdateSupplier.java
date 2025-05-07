@@ -21,10 +21,41 @@ public class UpdateSupplier implements Command {
             return false;
         }
 
-        supplier.update(QueryBuilder.supplierQuery());
+        try{
+            Map<String, Object> query = getQuery(supplier);
+            supplier.update(query);
+        }catch(Exception e){
+            Printer.error(e.getMessage());
+            return false;
+        }
 
         Printer.success("Supplier information updated successfully.");
 
         return false;
+    }
+
+    private Map<String, Object> getQuery(SupplierEntity supplier) throws Exception{
+        Map<String, Object> query = QueryBuilder.supplierQuery();
+        StringBuilder errorString = new StringBuilder();
+
+        for (Map.Entry<String, Object> entry : query.entrySet()){
+            String value = (String) entry.getValue();
+            String key = entry.getKey();
+
+            SupplierEntity foundSupplier = supplierRepository.findOne(Map.of(key, value));
+
+            if(!value.isEmpty()
+                    && foundSupplier != null
+                    && foundSupplier != supplier
+            ){
+                errorString.append("Invalid ").append(key).append(" update.\n");
+            }
+        }
+
+        if(!errorString.isEmpty()){
+            throw new Exception(errorString + "Supplier already exists.");
+        }
+
+        return query;
     }
 }

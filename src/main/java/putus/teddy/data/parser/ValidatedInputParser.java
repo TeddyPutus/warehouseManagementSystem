@@ -9,7 +9,8 @@ public class ValidatedInputParser extends InputParser {
         if (isRequired && (doubleValue < 0)) {
             Printer.warning("Amount cannot be negative. Please enter a valid amount.");
             return parseAmount(fieldName, true);
-        }else if(doubleValue != Double.MIN_VALUE && doubleValue < 0){
+        }else if((doubleValue != Double.MIN_VALUE && doubleValue < 0)
+                || Double.doubleToRawLongBits(doubleValue) == Double.doubleToRawLongBits(-0.0)){
             Printer.warning("Amount cannot be negative. Please enter a valid amount.");
             return parseAmount(fieldName, false);
         }
