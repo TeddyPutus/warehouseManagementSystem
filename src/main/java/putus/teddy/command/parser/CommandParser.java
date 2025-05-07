@@ -13,6 +13,9 @@ public class CommandParser {
 
     public static CommandType parseCommand() {
         Printer.info("Enter command: ", false);
+
+        while (!scanner.hasNextLine()) {}
+
         String input = scanner.nextLine();
 
         try {

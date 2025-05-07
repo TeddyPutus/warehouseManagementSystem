@@ -28,5 +28,7 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B clean package --file pom.xml -DskipTests
+    - name: Build Docker image
+      run: docker build -t warehouse-management-system .
     - name: Run Tests with Maven
       run: mvn -B test --file pom.xml
