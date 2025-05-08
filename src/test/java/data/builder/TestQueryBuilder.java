@@ -1,25 +1,21 @@
 package data.builder;
 
 import org.junit.Test;
-import org.mockito.MockedStatic;
 import putus.teddy.data.builder.*;
 import putus.teddy.data.entity.CustomerPurchaseEntity;
 import putus.teddy.data.entity.InventoryEntity;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.entity.SupplierPurchaseEntity;
-import putus.teddy.data.parser.InputParser;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class TestQueryBuilder {
     @Test
-    public void testSupplierSearchQuery() {
-            List<Predicate<SupplierEntity>> query = QueryBuilder.supplierSearch("Test name", "Test phone", "Test email");
+    public void testSearchSupplierQuery() {
+            List<Predicate<SupplierEntity>> query = QueryBuilder.searchSupplier("Test name", "Test phone", "Test email");
             assertTrue("Test name", query.getFirst().test(new SupplierEntity("Test name", "Test phone", "Test email")));
 
     }

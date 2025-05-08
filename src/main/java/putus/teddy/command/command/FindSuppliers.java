@@ -8,14 +8,14 @@ import putus.teddy.printer.Printer;
 
 public class FindSuppliers implements Command {
      public Result execute() {
-         Printer.info("Finding Suppliers, please enter optional filter values...");
+         Printer.infoLine("Finding Suppliers, please enter optional filter values...");
 
          Printer.printTable(
-                 supplierRepository.findMany(QueryBuilder.supplierSearch(
+                 supplierRepository.findMany(QueryBuilder.searchSupplier(
                             ValidatedInputParser.parseString("name", false, 1, 15),
                             ValidatedInputParser.parseString("phone number", false, 1, 12),
                             ValidatedInputParser.parseString("email", false, 1, 20)
-                 )).map(entity -> (DataEntity) entity),
+                 )),
                  SupplierEntity.getTableHead()
          );
 

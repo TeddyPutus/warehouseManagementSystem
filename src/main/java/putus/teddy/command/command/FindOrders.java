@@ -8,7 +8,7 @@ import putus.teddy.printer.Printer;
 
 public class FindOrders implements Command{
     public Result execute() {
-        Printer.info("Finding Customer Orders, please enter optional filter values...");
+        Printer.infoLine("Finding Customer Orders, please enter optional filter values...");
 
         Printer.printTable(
                 customerPurchaseRepository.findMany(QueryBuilder.searchCustomerOrder(
@@ -16,7 +16,7 @@ public class FindOrders implements Command{
                         ValidatedInputParser.parseString("itemName", false, 1, 15),
                         ValidatedInputParser.parseQuantity("quantity", false),
                         ValidatedInputParser.parseString("date", false,1,10)
-                )).map(entity -> (DataEntity) entity),
+                )),
                 CustomerPurchaseEntity.getTableHead()
         );
 

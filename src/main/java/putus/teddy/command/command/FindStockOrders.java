@@ -8,7 +8,7 @@ import putus.teddy.printer.Printer;
 
 public class FindStockOrders implements Command {
     public Result execute() {
-        Printer.info("Finding Stock Orders, please enter optional filter values...");
+        Printer.infoLine("Finding Stock Orders, please enter optional filter values...");
 
         Printer.printTable(
                 supplierPurchaseRepository.findMany(QueryBuilder.searchSupplierPurchase(
@@ -17,7 +17,7 @@ public class FindStockOrders implements Command {
                         ValidatedInputParser.parseQuantity("quantity", false),
                         ValidatedInputParser.parseAmount("price", false),
                         ValidatedInputParser.parseString("date", false, 1, 10)
-                )).map(entity -> (DataEntity) entity),
+                )),
                 SupplierPurchaseEntity.getTableHead()
         );
 

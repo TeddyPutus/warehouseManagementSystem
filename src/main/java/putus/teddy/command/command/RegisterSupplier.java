@@ -6,17 +6,15 @@ import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
-import java.util.Map;
-
 public class RegisterSupplier implements Command {
 
     @Override
     public Result execute() {
-        Printer.info("Registering supplier...");
+        Printer.infoLine("Registering supplier...");
 
         SupplierEntity newSupplier = createSupplierEntity();
 
-        if(supplierRepository.findOne(QueryBuilder.supplierSearchByName(newSupplier.getName())) != null) {
+        if(supplierRepository.findOne(QueryBuilder.searchSupplierByName(newSupplier.getName())) != null) {
             Printer.error("Supplier already exists.");
             return Result.FAILURE;
         }

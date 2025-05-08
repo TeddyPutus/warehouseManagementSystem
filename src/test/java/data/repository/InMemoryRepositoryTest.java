@@ -29,7 +29,7 @@ public class InMemoryRepositoryTest {
     @Test
     public void testFindOne() {
 
-        SupplierEntity supplier = repository.findOne(QueryBuilder.supplierSearchByName("Supplier A"));
+        SupplierEntity supplier = repository.findOne(QueryBuilder.searchSupplierByName("Supplier A"));
 
         assertEquals("Supplier A", supplier.getName());
         assertEquals("123-456-7890", supplier.getPhoneNumber());
@@ -39,7 +39,7 @@ public class InMemoryRepositoryTest {
     @Test
     public void testFindOneReturnsNull() {
 
-        SupplierEntity supplier = repository.findOne(QueryBuilder.supplierSearchByName("Nonexistent Supplier"));
+        SupplierEntity supplier = repository.findOne(QueryBuilder.searchSupplierByName("Nonexistent Supplier"));
 
         assertNull("Supplier should not exist", supplier);
     }
@@ -50,7 +50,7 @@ public class InMemoryRepositoryTest {
 
         boolean created = repository.create(newSupplier);
         assertTrue("New supplier should be added successfully", created);
-        SupplierEntity supplier = repository.findOne(QueryBuilder.supplierSearchByName("Supplier D"));
+        SupplierEntity supplier = repository.findOne(QueryBuilder.searchSupplierByName("Supplier D"));
 
         assertEquals("Supplier D", supplier.getName());
     }
@@ -61,16 +61,16 @@ public class InMemoryRepositoryTest {
         SupplierEntity newSupplier = new SupplierEntity("Supplier D", "123-456-7890", "supplier_d@email.com");
         repository.create(newSupplier);
 
-        boolean deleted = repository.deleteOne(QueryBuilder.supplierSearchByName("Supplier D"));
+        boolean deleted = repository.deleteOne(QueryBuilder.searchSupplierByName("Supplier D"));
         assertTrue("Supplier D should be deleted successfully", deleted);
 
-        SupplierEntity supplier = repository.findOne(QueryBuilder.supplierSearchByName("Supplier D"));
+        SupplierEntity supplier = repository.findOne(QueryBuilder.searchSupplierByName("Supplier D"));
         assertNull("Supplier D should no longer exist", supplier);
     }
 
     @Test
     public void testDeleteSupplierReturnsFalse(){
-        assertFalse("Deleting a nonexistent supplier should return false", repository.deleteOne(QueryBuilder.supplierSearchByName("Nonexistent Supplier")));
+        assertFalse("Deleting a nonexistent supplier should return false", repository.deleteOne(QueryBuilder.searchSupplierByName("Nonexistent Supplier")));
     }
 
     @Test
@@ -83,12 +83,12 @@ public class InMemoryRepositoryTest {
         repository.create(newSupplier2);
         repository.create(newSupplier3);
 
-        Stream<SupplierEntity> suppliers = repository.findMany(QueryBuilder.supplierSearchByName("Supplier Z"));
+        Stream<SupplierEntity> suppliers = repository.findMany(QueryBuilder.searchSupplierByName("Supplier Z"));
         assertEquals(3, suppliers.count());
 
         assertEquals(
                 "List should equal all Supplier Z entries",
-                repository.findMany(QueryBuilder.supplierSearchByName("Supplier Z")).toList(), List.of(
+                repository.findMany(QueryBuilder.searchSupplierByName("Supplier Z")).toList(), List.of(
                         newSupplier1,
                         newSupplier2,
                         newSupplier3
@@ -100,7 +100,7 @@ public class InMemoryRepositoryTest {
     @Test
     public void testFindManyReturnsEmptyStream() {
 
-        Stream<SupplierEntity> suppliers = repository.findMany(QueryBuilder.supplierSearchByName("Nonexistent Supplier"));
+        Stream<SupplierEntity> suppliers = repository.findMany(QueryBuilder.searchSupplierByName("Nonexistent Supplier"));
         assertEquals(0, suppliers.count());
     }
 
@@ -115,7 +115,7 @@ public class InMemoryRepositoryTest {
         repository.create(newSupplier3);
 
 
-        List<Predicate<SupplierEntity>> query = QueryBuilder.supplierSearchByName("Supplier Z");
+        List<Predicate<SupplierEntity>> query = QueryBuilder.searchSupplierByName("Supplier Z");
 
         int deletedCount = repository.deleteMany(query);
         assertEquals(3, deletedCount);
@@ -126,7 +126,7 @@ public class InMemoryRepositoryTest {
 
     @Test
     public void testDeleteManyReturnsZero(){
-        List<Predicate<SupplierEntity>> query = QueryBuilder.supplierSearchByName("Nonexistent Supplier");
+        List<Predicate<SupplierEntity>> query = QueryBuilder.searchSupplierByName("Nonexistent Supplier");
         assertEquals(0, repository.deleteMany(query));
 
     }

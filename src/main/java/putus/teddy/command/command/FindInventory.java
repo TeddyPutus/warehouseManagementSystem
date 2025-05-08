@@ -9,14 +9,14 @@ import putus.teddy.printer.Printer;
 public class FindInventory implements Command {
 
     public Result execute() {
-        Printer.info("Finding Inventory, please enter optional filter values...");
+        Printer.infoLine("Finding Inventory, please enter optional filter values...");
 
         Printer.printTable(
                 inventoryRepository.findMany(QueryBuilder.searchInventory(
                         ValidatedInputParser.parseString("name", false,1,15),
                         ValidatedInputParser.parseQuantity("quantity", false),
                         ValidatedInputParser.parseAmount("price", false)
-                )).map(entity -> (DataEntity) entity),
+                )),
                 InventoryEntity.getTableHead()
         );
 

@@ -7,14 +7,12 @@ import putus.teddy.data.entity.SupplierPurchaseEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
-import java.util.Map;
-
 import static putus.teddy.data.entity.SupplierPurchaseEntity.Status.PENDING;
 
 public class TakeDelivery implements Command {
 
     public Result execute() {
-        Printer.info("Taking delivery...");
+        Printer.infoLine("Taking delivery...");
         SupplierPurchaseEntity order;
         InventoryEntity inventoryEntity;
         FinancialEntity financialEntity;

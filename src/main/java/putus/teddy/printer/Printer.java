@@ -14,19 +14,15 @@ public class Printer {
 
     private static PrintStream outputStream = System.out;
 
-    public static void info(String message, boolean isNewLine) {
-        if(isNewLine) {
-            outputStream.println(message);
-        } else {
+    public static void info(String message) {
             outputStream.print(message);
-        }
     }
 
     public static void setOutputStream(PrintStream outputStream) {
         Printer.outputStream = outputStream;
     }
 
-    public static void info(String message) {
+    public static void infoLine(String message) {
         outputStream.println(message);
     }
 
@@ -68,16 +64,16 @@ public class Printer {
     }
 
     private static void printTableHead(String tableHead) {
-        info("-".repeat(tableHead.length()));
-        info(tableHead);
-        info("-".repeat(tableHead.length()));
+        infoLine("-".repeat(tableHead.length()));
+        infoLine(tableHead);
+        infoLine("-".repeat(tableHead.length()));
     }
 
-    public static void printTable(Stream<DataEntity> dataEntities, String tableHead) {
+    public static void printTable(Stream<? extends DataEntity> dataEntities, String tableHead) {
         printTableHead(tableHead);
         int[] rowCount = {0};
         dataEntities.forEach(entity -> {
-            info(entity.getTableRow(), false);
+            info(entity.getTableRow());
             rowCount[0]++;
         });
 

@@ -8,14 +8,13 @@ import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 public class CustomerOrder implements Command {
     private FinancialEntity financialEntity;
     private InventoryEntity inventoryEntity;
 
     public Result execute() {
-        Printer.info("Taking customer order...");
+        Printer.infoLine("Taking customer order...");
         CustomerPurchaseEntity newOrder;
 
         newOrder = createCustomerPurchaseEntity();
@@ -75,7 +74,7 @@ public class CustomerOrder implements Command {
         }
 
         inventoryEntity.setQuantity(inventoryEntity.getQuantity() - quantity);
-        Printer.info("Remaining stock for " + itemName + ": " + inventoryEntity.getQuantity());
+        Printer.infoLine("Remaining stock for " + itemName + ": " + inventoryEntity.getQuantity());
 
         if (inventoryEntity.getQuantity() <= 5) {
             Printer.alert("Stock for " + itemName + " is low. Please order more stock.");

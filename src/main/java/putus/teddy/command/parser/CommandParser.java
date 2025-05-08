@@ -12,7 +12,7 @@ public class CommandParser {
     }
 
     public static CommandType parseCommand() {
-        Printer.info("Enter command: ", false);
+        Printer.info("Enter command: ");
         String input = scanner.nextLine();
 
         try {

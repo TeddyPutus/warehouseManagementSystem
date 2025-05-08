@@ -6,15 +6,12 @@ import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class UpdateSupplier implements Command {
 
     public Result execute() {
-        Printer.info("Updating supplier information...");
+        Printer.infoLine("Updating supplier information...");
         String supplierId = ValidatedInputParser.parseString("Supplier ID", true, 1, 36);
-        SupplierEntity supplier = supplierRepository.findOne(QueryBuilder.supplierSearchById(supplierId));
+        SupplierEntity supplier = supplierRepository.findOne(QueryBuilder.searchSupplierById(supplierId));
 
         if (supplier == null) {
             Printer.warning("Supplier not found.");
@@ -40,9 +37,9 @@ public class UpdateSupplier implements Command {
         String phoneNumber = ValidatedInputParser.parseString("phone number", false, 1, 12);
         String email = ValidatedInputParser.parseString("email", false, 1, 20);
 
-        SupplierEntity nameSupplier = supplierRepository.findOne(QueryBuilder.supplierSearch(name, null, null));
-        SupplierEntity phoneSupplier = supplierRepository.findOne(QueryBuilder.supplierSearch(null, phoneNumber, null));
-        SupplierEntity emailSupplier = supplierRepository.findOne(QueryBuilder.supplierSearch(null, null, email));
+        SupplierEntity nameSupplier = supplierRepository.findOne(QueryBuilder.searchSupplier(name, null, null));
+        SupplierEntity phoneSupplier = supplierRepository.findOne(QueryBuilder.searchSupplier(null, phoneNumber, null));
+        SupplierEntity emailSupplier = supplierRepository.findOne(QueryBuilder.searchSupplier(null, null, email));
 
         if(!name.isEmpty() && nameSupplier != supplier) errorString.append("Invalid name update.\n");
         if(!name.isEmpty() && phoneSupplier != supplier) errorString.append("Invalid phone number update.\n");

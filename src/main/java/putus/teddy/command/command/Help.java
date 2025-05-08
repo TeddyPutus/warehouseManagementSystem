@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class Help implements Command {
     public Result execute() {
-        Printer.info("Available commands: " + Arrays.stream(CommandType.values()).filter(value -> value != CommandType.DEFAULT).toList());
+        Printer.infoLine("Available commands: " + Arrays.stream(CommandType.values()).filter(value -> value != CommandType.DEFAULT).toList());
         return Result.SUCCESS;
     }
 }

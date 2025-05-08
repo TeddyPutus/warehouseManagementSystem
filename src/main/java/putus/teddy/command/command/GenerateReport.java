@@ -6,7 +6,7 @@ import putus.teddy.printer.Printer;
 public class GenerateReport implements Command {
 
     public Result execute() {
-        Printer.info("Generating financial report...");
+        Printer.infoLine("Generating financial report...");
 
         double[] totals = {0.0, 0.0};
 
@@ -21,9 +21,9 @@ public class GenerateReport implements Command {
         }
         );
 
-        Printer.info("Total Sales: " + totals[0]);
-        Printer.info("Total Expenses: " + totals[1]);
-        Printer.info("Net Profit: " + (totals[0] - totals[1]));
+        Printer.infoLine("Total Sales: " + totals[0]);
+        Printer.infoLine("Total Expenses: " + totals[1]);
+        Printer.infoLine("Net Profit: " + (totals[0] - totals[1]));
 
         return Result.SUCCESS;
     }

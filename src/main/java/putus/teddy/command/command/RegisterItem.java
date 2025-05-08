@@ -6,11 +6,9 @@ import putus.teddy.data.entity.InventoryEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
-import java.util.Map;
-
 public class RegisterItem implements Command {
     public Result execute() {
-        Printer.info("Registering item...");
+        Printer.infoLine("Registering item...");
 
         InventoryEntity newItem = createInventoryEntity();
 
