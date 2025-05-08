@@ -1,13 +1,11 @@
 package putus.teddy.data.repository;
 
-import putus.teddy.data.entity.DataEntity;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class InMemoryRepository<T extends DataEntity> implements Repository<T>{
+public class InMemoryRepository<T> implements Repository<T> {
     private List<T> entities = new ArrayList<>();
 
     public boolean createMany(List<T> entities) {
