@@ -3,12 +3,22 @@ package putus.teddy.command.command;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
+import putus.teddy.data.repository.Repository;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
 import java.util.Map;
 
 public class RegisterItem implements Command {
+
+    private final Repository<FinancialEntity> financialRepository;
+    private final Repository<InventoryEntity> inventoryRepository;
+
+    public RegisterItem(Repository<FinancialEntity> financialRepository, Repository<InventoryEntity> inventoryRepository) {
+        this.financialRepository = financialRepository;
+        this.inventoryRepository = inventoryRepository;
+    }
+
     public Result execute() {
         Printer.info("Registering item...");
 

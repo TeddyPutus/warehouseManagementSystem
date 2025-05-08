@@ -1,14 +1,30 @@
 package putus.teddy.command.command;
 
 import putus.teddy.data.builder.QueryBuilder;
+import putus.teddy.data.entity.InventoryEntity;
+import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.entity.SupplierPurchaseEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
+import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
 import java.time.LocalDate;
 import java.util.Map;
 
 public class OrderStock implements Command {
+
+    private final Repository<SupplierPurchaseEntity> supplierPurchaseRepository;
+    private final Repository<SupplierEntity> supplierRepository;
+    private final Repository<InventoryEntity> inventoryRepository;
+
+    public OrderStock(Repository<SupplierPurchaseEntity> supplierPurchaseRepository,
+                      Repository<SupplierEntity> supplierRepository,
+                      Repository<InventoryEntity> inventoryRepository) {
+        this.supplierPurchaseRepository = supplierPurchaseRepository;
+        this.supplierRepository = supplierRepository;
+        this.inventoryRepository = inventoryRepository;
+    }
+
     public Result execute() {
         Printer.info("Ordering stock...");
 

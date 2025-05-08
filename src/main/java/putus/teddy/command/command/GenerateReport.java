@@ -1,9 +1,16 @@
 package putus.teddy.command.command;
 
 import putus.teddy.data.entity.FinancialEntity;
+import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
 public class GenerateReport implements Command {
+
+    private final Repository<FinancialEntity> financialRepository;
+
+    public GenerateReport(Repository<FinancialEntity> financialRepository) {
+        this.financialRepository = financialRepository;
+    }
 
     public Result execute() {
         Printer.info("Generating financial report...");

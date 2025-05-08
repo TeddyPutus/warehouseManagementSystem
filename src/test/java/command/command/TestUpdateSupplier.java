@@ -5,12 +5,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import putus.teddy.command.command.Command;
 import putus.teddy.command.command.UpdateSupplier;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.parser.InputParser;
 import putus.teddy.data.parser.ValidatedInputParser;
+import putus.teddy.data.repository.InMemoryRepository;
 import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
@@ -23,66 +25,75 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 
 public class TestUpdateSupplier {
-    static ByteArrayOutputStream outContent;
-    UpdateSupplier command = new UpdateSupplier();
+    static InMemoryRepository<SupplierEntity> supplierRepository = new InMemoryRepository<>();
+    UpdateSupplier command = new UpdateSupplier(supplierRepository);
 
-    static SupplierEntity entity1 = new SupplierEntity("item1", "1234", "email");
+    MockedStatic<ValidatedInputParser> mockParser;
+    MockedStatic<Printer> mockPrinter;
+
+    static SupplierEntity entity1 = new SupplierEntity("Supplier 1", "1234", "email");
 
     @BeforeClass
     public static void classSetUp() {
-        UpdateSupplier.supplierRepository.deleteMany(List.of(entity -> true));
-        UpdateSupplier.supplierRepository.create(entity1);
-        outContent = new ByteArrayOutputStream();
-        Printer.setOutputStream(new PrintStream(outContent));
+        supplierRepository.create(entity1);
     }
 
     @Before
-    public void testSetUp() {
-        outContent.reset();
+    public void setUp() {
+        mockParser = Mockito.mockStatic(ValidatedInputParser.class);
+        mockPrinter = Mockito.mockStatic(Printer.class);
+        entity1.setPhoneNumber("1234");
+        entity1.setEmail("email");
+        entity1.setName("Supplier 1");
+    }
+
+    @After
+    public void tearDown() {
+        mockParser.close();
+        mockPrinter.close();
     }
 
     @Test
     public void testUpdateSupplier() {
+        mockParser.when(
+                        () -> ValidatedInputParser.parseString("Supplier ID", true, 1, 36))
+                .thenReturn(entity1.getId());
+        mockParser.when(
+                () -> ValidatedInputParser.parseString("name", false, 1, 15)
+        ).thenReturn("");
+        mockParser.when(
+                () -> ValidatedInputParser.parseString("phone number", false, 1, 12)
+        ).thenReturn("5678");
+        mockParser.when(
+                () -> ValidatedInputParser.parseString("email", false, 1, 20)
+        ).thenReturn("");
 
-        try (MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
-             MockedStatic<QueryBuilder> mockedBuilder = org.mockito.Mockito.mockStatic(QueryBuilder.class)) {
-            mockParser.when(
-                    () -> ValidatedInputParser.parseString("name", false, 1, 15)
-            ).thenReturn("");
-            mockParser.when(
-                    () -> ValidatedInputParser.parseString("phone number", false, 1, 12)
-            ).thenReturn("5678");
-            mockParser.when(
-                    () -> ValidatedInputParser.parseString("email", false, 1, 20)
-            ).thenReturn("");
+        Command.Result result = command.execute();
 
-            Predicate<SupplierEntity> predicate = entity -> entity.getId().equals(entity1.getId());
+        mockPrinter.verify(() -> Printer.info("Updating supplier information..."));
+        mockPrinter.verify(() -> Printer.success("Supplier information updated successfully."));
+        mockPrinter.verifyNoMoreInteractions();
 
-            mockedBuilder.when(() -> QueryBuilder.supplierSearchById(anyString())).thenReturn(List.of(predicate));
+        assertEquals(Command.Result.SUCCESS, result);
 
-            Command.Result result = command.execute();
-            assertEquals(Command.Result.SUCCESS, result);
-
-            String output = outContent.toString();
-            assertFalse(output.contains("Supplier not found."));
-            assertTrue(output.contains("Supplier information updated successfully."));
-            assertEquals("5678", entity1.getPhoneNumber());
-        }
+        assertEquals("5678", entity1.getPhoneNumber());
     }
 
     @Test
     public void testUpdateSupplierNotFound() {
-        try (MockedStatic<InputParser> mockParser = org.mockito.Mockito.mockStatic(InputParser.class)) {
-            mockParser.when(
-                    () -> InputParser.parseString("Supplier ID", true)
-            ).thenReturn("non-existing-id");
+        mockParser.when(
+                () -> ValidatedInputParser.parseString("Supplier ID", true, 1, 36))
+                .thenReturn("non-existing-id");
 
-            Command.Result result = command.execute();
-            assertEquals(Command.Result.FAILURE, result);
+        Command.Result result = command.execute();
+        assertEquals(Command.Result.FAILURE, result);
 
-            String output = outContent.toString();
-            assertTrue(output.contains("Supplier not found."));
-            assertFalse(output.contains("Supplier information updated successfully."));
-        }
+        mockPrinter.verify(() -> Printer.info("Updating supplier information..."));
+        mockPrinter.verify(() -> Printer.warning("Supplier not found."));
+        mockPrinter.verifyNoMoreInteractions();
+
+        assertEquals("1234", entity1.getPhoneNumber());
+        assertEquals("email", entity1.getEmail());
+        assertEquals("Supplier 1", entity1.getName());
     }
 }

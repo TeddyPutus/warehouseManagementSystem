@@ -4,9 +4,17 @@ import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.DataEntity;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
+import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
 public class FindSuppliers implements Command {
+
+    private final Repository<SupplierEntity> supplierRepository;
+
+    public FindSuppliers(Repository<SupplierEntity> supplierRepository) {
+        this.supplierRepository = supplierRepository;
+    }
+
      public Result execute() {
          Printer.info("Finding Suppliers, please enter optional filter values...");
 

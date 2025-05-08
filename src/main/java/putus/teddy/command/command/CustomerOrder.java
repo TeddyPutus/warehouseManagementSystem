@@ -5,6 +5,7 @@ import putus.teddy.data.entity.CustomerPurchaseEntity;
 import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
+import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
 import java.time.LocalDate;
@@ -13,6 +14,19 @@ import java.util.Map;
 public class CustomerOrder implements Command {
     private FinancialEntity financialEntity;
     private InventoryEntity inventoryEntity;
+
+    private final Repository<FinancialEntity> financialRepository;
+    private final Repository<InventoryEntity> inventoryRepository;
+    private final Repository<CustomerPurchaseEntity> customerPurchaseRepository;
+
+    public CustomerOrder(Repository<FinancialEntity> financialRepository,
+                         Repository<InventoryEntity> inventoryRepository,
+                         Repository<CustomerPurchaseEntity> customerPurchaseRepository) {
+        this.financialRepository = financialRepository;
+        this.inventoryRepository = inventoryRepository;
+        this.customerPurchaseRepository = customerPurchaseRepository;
+
+    }
 
     public Result execute() {
         Printer.info("Taking customer order...");

@@ -4,11 +4,18 @@ package putus.teddy.command.command;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
+import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
 import java.util.Map;
 
 public class RegisterSupplier implements Command {
+
+    private final Repository<SupplierEntity> supplierRepository;
+
+    public RegisterSupplier(Repository<SupplierEntity> supplierRepository) {
+        this.supplierRepository = supplierRepository;
+    }
 
     @Override
     public Result execute() {
