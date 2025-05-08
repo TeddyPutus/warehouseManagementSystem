@@ -1,0 +1,32 @@
+---
+title: Search Diagram
+---
+
+sequenceDiagram
+    actor u as User
+    participant i as ValidatedInputParser
+    participant q as QueryBuilder
+    participant c as Command
+    participant r as Repository
+    participant p as Printer
+
+    loop for each search criteria
+        i->>p: "Enter search criteria"
+        p->>u: "Enter search criteria"
+        u->>i: searchCriteria
+
+        alt search criteria is valid
+            i->>q: parse search criteria
+            q->>i: search criteria
+        else search criteria is invalid
+            i->>p: "Invalid search criteria"
+            p->>u: "Invalid search criteria"
+            u->>i: searchCriteria
+        end
+    end
+
+    i->>q: user input
+    q->>c: filters
+    c->>r: find many with filters
+    r->>c: data stream
+    c->>p: print data stream as table
