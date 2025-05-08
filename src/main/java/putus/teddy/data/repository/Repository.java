@@ -1,13 +1,13 @@
 package putus.teddy.data.repository;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public interface Repository<T> {
     boolean create(T entity);
+
+    void createMany(List<T> entities);
 
     Stream<T> findAll();
 

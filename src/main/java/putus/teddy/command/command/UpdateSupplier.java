@@ -4,12 +4,19 @@ package putus.teddy.command.command;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
+import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class UpdateSupplier implements Command {
+
+    private final Repository<SupplierEntity> supplierRepository;
+
+    public UpdateSupplier(Repository<SupplierEntity> supplierRepository) {
+        this.supplierRepository = supplierRepository;
+    }
 
     public Result execute() {
         Printer.info("Updating supplier information...");

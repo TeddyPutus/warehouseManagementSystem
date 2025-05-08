@@ -4,83 +4,90 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import putus.teddy.command.command.Command;
 import putus.teddy.command.command.RegisterItem;
 
+import putus.teddy.data.entity.DataEntity;
+import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
 
 import putus.teddy.data.parser.ValidatedInputParser;
+import putus.teddy.data.repository.InMemoryRepository;
 import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 
 public class TestRegisterItem {
-    static ByteArrayOutputStream outContent;
-    RegisterItem command = new RegisterItem();
+    static InMemoryRepository<InventoryEntity> inventoryRepository = new InMemoryRepository<>();
+    static InMemoryRepository<FinancialEntity> financialRepository = new InMemoryRepository<>();
+    RegisterItem command = new RegisterItem(financialRepository, inventoryRepository);
+
+    MockedStatic<ValidatedInputParser> mockParser;
+    MockedStatic<Printer> mockPrinter;
 
     static InventoryEntity entity1 = new InventoryEntity("item1", 1, 1.0);
 
     @BeforeClass
     public static void classSetUp() {
-        RegisterItem.inventoryRepository.deleteMany(List.of(entity -> true));
-        RegisterItem.financialRepository.deleteMany(List.of(entity -> true));
-        RegisterItem.inventoryRepository.create(entity1);
-        outContent = new ByteArrayOutputStream();
-        Printer.setOutputStream(new PrintStream(outContent));
+        inventoryRepository.create(entity1);
     }
 
     @Before
-    public void testSetUp() {
-        outContent.reset();
+    public void setUp() {
+        mockParser = Mockito.mockStatic(ValidatedInputParser.class);
+        mockPrinter = Mockito.mockStatic(Printer.class);
+    }
+
+    @After
+    public void tearDown() {
+        mockParser.close();
+        mockPrinter.close();
     }
 
     @Test
     public void testRegisterItemWhenItemAlreadyExists() {
-        try(
-                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
-        ) {
-            mockParser.when(()-> ValidatedInputParser.parseString(anyString(),anyBoolean(),anyInt(),anyInt())).thenReturn("item1");
-            mockParser.when(()-> ValidatedInputParser.parseAmount(anyString(),anyBoolean())).thenReturn(0.0);
+        mockParser.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("item1");
+        mockParser.when(() -> ValidatedInputParser.parseAmount(anyString(), anyBoolean())).thenReturn(0.0);
 
-            Command.Result result = command.execute();
-            assertEquals(Command.Result.FAILURE, result);
+        Command.Result result = command.execute();
+        assertEquals(Command.Result.FAILURE, result);
 
-            String output = outContent.toString();
-            assertTrue(output.contains("Item already exists."));
-            assertFalse(output.contains("Item registered successfully."));
-            assertEquals(1, RegisterItem.inventoryRepository.findAll().toList().size());
-            assertNull(RegisterItem.financialRepository.findOne(List.of(entity -> entity.getItemName().equals("item1"))));
-        }
+        mockPrinter.verify(() -> Printer.info("Registering item..."));
+        mockPrinter.verify(() -> Printer.error("Item already exists."));
+        mockPrinter.verifyNoMoreInteractions();
+
+        assertEquals(1, inventoryRepository.findAll().toList().size());
+        assertNull(financialRepository.findOne(List.of(entity -> entity.getItemName().equals("item1"))));
     }
 
     @Test
     public void testRegisterItem() {
-        try(
-                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
-        ) {
-            mockParser.when(()-> ValidatedInputParser.parseString(anyString(),anyBoolean(),anyInt(),anyInt())).thenReturn("item2");
-            mockParser.when(()-> ValidatedInputParser.parseAmount(anyString(),anyBoolean())).thenReturn(0.0);
+        mockParser.when(() -> ValidatedInputParser.parseString(anyString(), anyBoolean(), anyInt(), anyInt())).thenReturn("item2");
+        mockParser.when(() -> ValidatedInputParser.parseAmount(anyString(), anyBoolean())).thenReturn(0.0);
 
-            Command.Result result = command.execute();
-            assertEquals(Command.Result.SUCCESS, result);
+        Command.Result result = command.execute();
+        assertEquals(Command.Result.SUCCESS, result);
 
-            String output = outContent.toString();
-            assertTrue(output.contains("Item registered successfully."));
-            assertFalse(output.contains("Item already exists."));
-            assertEquals(2, RegisterItem.inventoryRepository.findAll().toList().size());
-            assertNotNull(RegisterItem.inventoryRepository.findOne(
-                    List.of(entity -> entity.getItemName().equals("item2"))));
-            assertNotNull(RegisterItem.financialRepository.findOne(
-                    List.of(entity -> entity.getItemName().equals("item2"))
-            ));
-        }
+        mockPrinter.verify(() -> Printer.info("Registering item..."));
+        mockPrinter.verify(() -> Printer.success("Item registered successfully."));
+        mockPrinter.verifyNoMoreInteractions();
+
+        assertEquals(2, inventoryRepository.findAll().toList().size());
+        assertNotNull(inventoryRepository.findOne(
+                List.of(entity -> entity.getItemName().equals("item2"))));
+        assertNotNull(financialRepository.findOne(
+                List.of(entity -> entity.getItemName().equals("item2"))
+        ));
     }
 
 }

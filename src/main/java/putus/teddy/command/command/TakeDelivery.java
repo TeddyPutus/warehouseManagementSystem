@@ -5,6 +5,7 @@ import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
 import putus.teddy.data.entity.SupplierPurchaseEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
+import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
 import java.util.Map;
@@ -12,6 +13,16 @@ import java.util.Map;
 import static putus.teddy.data.entity.SupplierPurchaseEntity.Status.PENDING;
 
 public class TakeDelivery implements Command {
+
+    private final Repository<SupplierPurchaseEntity> supplierPurchaseRepository;
+    private final Repository<InventoryEntity> inventoryRepository;
+    private final Repository<FinancialEntity> financialRepository;
+
+    public TakeDelivery(Repository<SupplierPurchaseEntity> supplierPurchaseRepository, Repository<InventoryEntity> inventoryRepository, Repository<FinancialEntity> financialRepository) {
+        this.supplierPurchaseRepository = supplierPurchaseRepository;
+        this.inventoryRepository = inventoryRepository;
+        this.financialRepository = financialRepository;
+    }
 
     public Result execute() {
         Printer.info("Taking delivery...");

@@ -3,6 +3,8 @@ package command.command;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import putus.teddy.command.command.Command;
 import putus.teddy.command.command.Exit;
 import putus.teddy.data.parser.InputParser;
@@ -13,15 +15,15 @@ import putus.teddy.printer.Printer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.startsWith;
 
 public class TestExit {
 
     @Test
     public void testExit() {
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        Printer.setOutputStream(new PrintStream(outContent));
-        assertEquals(Command.Result.EXIT, new Exit().execute());
-
-        assertTrue(outContent.toString().contains("Exiting the application..."));
+        try (MockedStatic<Printer> mockPrinter = Mockito.mockStatic(Printer.class)) {
+            assertEquals(Command.Result.EXIT, new Exit().execute());
+            mockPrinter.verify(() -> Printer.info("Exiting the application..."));
+        }
     }
 }

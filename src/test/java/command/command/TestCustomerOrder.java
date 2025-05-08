@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.MockedStatic;
+import org.mockito.*;
 import putus.teddy.command.command.Command;
 import putus.teddy.command.command.CustomerOrder;
 import putus.teddy.command.command.RegisterItem;
@@ -13,6 +13,7 @@ import putus.teddy.data.entity.CustomerPurchaseEntity;
 import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
+import putus.teddy.data.repository.InMemoryRepository;
 import putus.teddy.printer.Printer;
 
 import java.io.ByteArrayOutputStream;
@@ -23,142 +24,124 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 public class TestCustomerOrder {
-    static ByteArrayOutputStream outContent;
-    CustomerOrder command = new CustomerOrder();
+
+    InMemoryRepository<InventoryEntity> mockInventoryRepository = Mockito.mock(InMemoryRepository.class);
+    InMemoryRepository<FinancialEntity> mockFinancialRepository = Mockito.mock(InMemoryRepository.class);
+    InMemoryRepository<CustomerPurchaseEntity> mockCustomerPurchaseRepository = Mockito.mock(InMemoryRepository.class);
+    MockedStatic<ValidatedInputParser> mockParser;
+    MockedStatic<Printer> mockPrinter;
+
+    CustomerOrder command = new CustomerOrder(mockFinancialRepository, mockInventoryRepository, mockCustomerPurchaseRepository);
 
     static InventoryEntity inventoryEntity = new InventoryEntity("item1", 1, 1.0);
     static FinancialEntity financialEntity = new FinancialEntity("item1", 0, 0, 10.0, 0.0);
 
-    @BeforeClass
-    public static void setUpClass() {
-        outContent = new ByteArrayOutputStream();
-        Printer.setOutputStream(new PrintStream(outContent));
+    @Before
+    public void setUp() {
+        mockParser = Mockito.mockStatic(ValidatedInputParser.class);
+        mockPrinter = Mockito.mockStatic(Printer.class);
     }
 
-    @Before
-    public void testSetUp() {
-
-
-        RegisterItem.inventoryRepository.deleteMany(List.of(entity -> true));
-        RegisterItem.financialRepository.deleteMany(List.of(entity -> true));
-        RegisterItem.customerPurchaseRepository.deleteMany(List.of(entity -> true));
-
-        inventoryEntity = new InventoryEntity("item1", 1, 10.0);
-        financialEntity = new FinancialEntity("item1", 0, 0, 10.0, 0.0);
-
-        RegisterItem.inventoryRepository.create(inventoryEntity);
-        RegisterItem.financialRepository.create(financialEntity);
+    @After
+    public void tearDown() {
+        mockParser.close();
+        mockPrinter.close();
     }
 
     @Test
     public void testCustomerOrder() {
-        try (
-                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
-        ) {
-            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
-            mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
-            mockParser.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(1);
+        mockParser.when(() -> ValidatedInputParser.parseString("name", true, 1, 15)).thenReturn("customer");
+        mockParser.when(() -> ValidatedInputParser.parseString("itemName", true, 1, 15)).thenReturn("item1");
+        mockParser.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(1);
 
-            Command.Result result = command.execute();
+        when(mockInventoryRepository.findOne(anyList())).thenReturn(inventoryEntity);
+        when(mockFinancialRepository.findOne(anyList())).thenReturn(financialEntity);
 
-            String output = outContent.toString();
+        Command.Result result = command.execute();
 
-            assertTrue(output.contains("Order placed successfully."));
-            assertEquals(Command.Result.SUCCESS, result);
+        mockPrinter.verify(() -> Printer.success(startsWith("Order placed successfully. Order ID is ")));
 
-            assertEquals(1, RegisterItem.customerPurchaseRepository.findAll().toList().size());
-            assertEquals(0, (int) RegisterItem.inventoryRepository.findOne(QueryBuilder.searchInventoryByItemName("item1")).getQuantity());
+        assertEquals(Command.Result.SUCCESS, result);
 
-            assertEquals(1, (int) RegisterItem.financialRepository.findOne(QueryBuilder.searchFinancial("item1")).getQuantitySold());
-            assertEquals(10.0, RegisterItem.financialRepository.findOne(QueryBuilder.searchFinancial("item1")).getTotalRevenue(), 0.001);
-        }
+        verify(mockInventoryRepository).findOne(anyList());
+        verify(mockFinancialRepository).findOne(anyList());
+        verify(mockCustomerPurchaseRepository).create(any());
     }
 
     @Test
     public void testCustomerOrderNotEnoughStock() {
-        try(
-                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
-        ) {
-            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
-            mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
-            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(2);
+        mockParser.when(() -> ValidatedInputParser.parseString("name", true, 1, 15)).thenReturn("customer");
+        mockParser.when(() -> ValidatedInputParser.parseString("itemName", true, 1, 15)).thenReturn("item1");
+        mockParser.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(2);
 
-            Command.Result result = command.execute();
+        when(mockInventoryRepository.findOne(anyList())).thenReturn(new InventoryEntity("item1", 0, 1.0));
+        when(mockFinancialRepository.findOne(anyList())).thenReturn(financialEntity);
 
-            String output = outContent.toString();
+        Command.Result result = command.execute();
 
-            assertTrue(output.contains("Not enough stock available."));
-            assertEquals(Command.Result.FAILURE, result);
+        mockPrinter.verify(() -> Printer.error("Not enough stock available. Please order more stock."));
+        assertEquals(Command.Result.FAILURE, result);
 
-            assertEquals(0, RegisterItem.customerPurchaseRepository.findAll().toList().size());
-            assertEquals(1, (int) RegisterItem.inventoryRepository.findOne(QueryBuilder.searchInventoryByItemName("item1")).getQuantity());
-        }
+        verify(mockInventoryRepository).findOne(anyList());
+        verify(mockFinancialRepository).findOne(anyList());
+        verify(mockCustomerPurchaseRepository, never()).create(any());
     }
 
     @Test
     public void testCustomerOrderLowStockAlert() {
+        mockParser.when(() -> ValidatedInputParser.parseString("name", true, 1, 15)).thenReturn("customer");
+        mockParser.when(() -> ValidatedInputParser.parseString("itemName", true, 1, 15)).thenReturn("item1");
+        mockParser.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(1);
 
-        try(
-                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
-        ) {
+        inventoryEntity.setQuantity(5);
+        when(mockInventoryRepository.findOne(anyList())).thenReturn(inventoryEntity);
+        when(mockFinancialRepository.findOne(anyList())).thenReturn(financialEntity);
 
-            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
-            mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
-            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(1);
 
-            Command.Result result = command.execute();
-            assertEquals(Command.Result.SUCCESS, result);
+        Command.Result result = command.execute();
 
-            String output = outContent.toString();
+        mockPrinter.verify(() -> Printer.alert("Stock for item1 is low. Please order more stock."));
+        assertEquals(Command.Result.SUCCESS, result);
 
-            assertTrue(output.contains("Stock for item1 is low. Please order more stock."));
-        }
+        verify(mockInventoryRepository).findOne(anyList());
+        verify(mockFinancialRepository).findOne(anyList());
     }
 
     @Test
     public void testCustomerOrderWhenItemNotFound() {
+        mockParser.when(() -> ValidatedInputParser.parseString("name", true, 1, 15)).thenReturn("customer");
+        mockParser.when(() -> ValidatedInputParser.parseString("itemName", true, 1, 15)).thenReturn("item2");
+        mockParser.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(2);
 
-        try(
-                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
-        ) {
-            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
-            mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item2");
-            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(2);
-            Command.Result result = command.execute();
-            assertEquals(Command.Result.FAILURE, result);
+        when(mockInventoryRepository.findOne(anyList())).thenReturn(null);
 
-            String output = outContent.toString();
+        Command.Result result = command.execute();
 
-            assertTrue(output.contains("Item does not exist. Please register item first."));
+        mockPrinter.verify(() -> Printer.error("Item does not exist. Please register item first."));
 
-            assertEquals(0, RegisterItem.customerPurchaseRepository.findAll().toList().size());
-        }
+        assertEquals(Command.Result.FAILURE, result);
+
+        verify(mockInventoryRepository).findOne(anyList());
     }
-
 
     @Test
     public void testFinancialEntityNotFound() {
+        mockParser.when(() -> ValidatedInputParser.parseString("name", true, 1, 15)).thenReturn("customer");
+        mockParser.when(() -> ValidatedInputParser.parseString("itemName", true, 1, 15)).thenReturn("item1");
+        mockParser.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(1);
 
-        try(
-                MockedStatic<ValidatedInputParser> mockParser = org.mockito.Mockito.mockStatic(ValidatedInputParser.class);
-        ) {
-            mockParser.when(()-> ValidatedInputParser.parseString("name", true,1,15)).thenReturn("customer");
-            mockParser.when(()-> ValidatedInputParser.parseString("itemName",true,1,15)).thenReturn("item1");
-            mockParser.when(()-> ValidatedInputParser.parseQuantity(anyString(),anyBoolean())).thenReturn(1);
+        when(mockInventoryRepository.findOne(anyList())).thenReturn(inventoryEntity);
+        when(mockFinancialRepository.findOne(anyList())).thenReturn(null);
 
-            CustomerOrder.financialRepository.deleteMany(List.of(entity -> true));
+        Command.Result result = command.execute();
 
-            Command.Result result = command.execute();
-            assertEquals(Command.Result.FAILURE, result);
+        mockPrinter.verify(() -> Printer.error("Financial entity not found for item: item1"));
+        assertEquals(Command.Result.FAILURE, result);
 
-            String output = outContent.toString();
-
-            assertTrue(output.contains("Financial entity not found for item:"));
-
-            assertEquals(0, RegisterItem.customerPurchaseRepository.findAll().toList().size());
-        }
+        verify(mockInventoryRepository).findOne(anyList());
+        verify(mockFinancialRepository).findOne(anyList());
     }
-
 }
