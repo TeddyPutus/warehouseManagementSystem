@@ -8,10 +8,10 @@ classDiagram
 
     class Repository{
         +bool create()
+        +bool createMany()
         +T findOne()
         +Stream findAll()
         +Stream findMany()
-        +bool update()
         +bool deleteOne()
         +int deleteMany()
     }
@@ -20,21 +20,28 @@ classDiagram
     }
 
     class DataEntity {
-        +getTableHead()
-        +getTableRow()
-        +gettersAndSetters()
+        +String getTableHead()
+        +String getTableRow()
+        +gettersAndSetters(): As needed for concrete implementation
     }
 
     class QueryBuilder{
-        +Map inventoryQuery()
-        +Map supplierQuery()
-        +Map customerOrderQuery()
-        +Map supplierPurchaseQuery()
-        -Map filterQuery()
+        +List searchSupplier()
+        +List searchSupplierById()
+        +List searchSupplierByName()
+        +List searchInventory()
+        +List searchInventoryByItemName()
+        +List searchCustomerOrder()
+        +List searchSupplierPurchase()
+        +List searchSupplierPurchaseById()
+        +List searchFinancial()
+        -bool isEmptyString()
+        -bool isEmptyInteger()
+        -bool isEmptyDouble()
     }
 
     class CommandParser {
-        +getCommand()
+        +CommandType getCommand()
     }
 
     class InputParser{
@@ -51,13 +58,14 @@ classDiagram
 
     class Printer{
         +void info()
+        +void infoLine()
         +void error()
         +void success()
         +void warning()
         +void alert()
         +void logo()
         +void printTable()
-        -void printTableRow()
+        -void printTableHead()
         +public void setOutputStream()
     }
 
@@ -67,10 +75,10 @@ classDiagram
 
     Repository --|> InMemoryRepository: Implements, T = DataEntity
     InputParser --|> ValidatedInputParser: Extends
-    ValidatedInputParser --> QueryBuilder
+    ValidatedInputParser --> Printer
     ValidatedInputParser --> Command
     Command --> Printer
-    QueryBuilder --> Command: Creates hashmaps
+    QueryBuilder --> Command: Creates predicates
     InMemoryRepository <--> Command: Command sends querys/entities,\nReceives Entities
     DataEntity .. InMemoryRepository: Stores
     DataEntity .. Command: Uses
