@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 public interface Repository<T> {
     boolean create(T entity);
 
+    boolean createMany(List<T> entities);
+
     Stream<T> findAll();
 
     T findOne(List<Predicate<T>> query);

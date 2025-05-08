@@ -29,18 +29,18 @@ public class Main {
     }
 
     public static void setUpTestData(){
-        Command.supplierRepository.importData(List.of(
+        Command.supplierRepository.createMany(List.of(
                 new SupplierEntity("Supplier A", "123-456-7890", "supplier_a@email.com"),
                 new SupplierEntity("Supplier B", "987-654-3210", "supplier_b@email.com"),
                 new SupplierEntity("Supplier C", "555-555-5555", "supplier_c@email.com")));
 
-        Command.inventoryRepository.importData(List.of(
+        Command.inventoryRepository.createMany(List.of(
                 new InventoryEntity("item1",  10, 200.0),
                 new InventoryEntity("item2", 20, 400.0),
                 new InventoryEntity("item3",  30, 60.0),
                 new InventoryEntity("item4", 4, 600.0)));
 
-        Command.financialRepository.importData(List.of(
+        Command.financialRepository.createMany(List.of(
                 new FinancialEntity("item1", 10, 0, 100.0, 0.0),
                 new FinancialEntity("item2", 20, 0, 200.0, 0.0),
                 new FinancialEntity("item3", 30, 0, 300.0, 0.0),

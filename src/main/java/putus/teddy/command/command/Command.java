@@ -2,19 +2,20 @@ package putus.teddy.command.command;
 
 import putus.teddy.data.entity.*;
 import putus.teddy.data.repository.InMemoryRepository;
+import putus.teddy.data.repository.Repository;
 
 public interface Command {
-    public static enum Result{
+    enum Result{
         SUCCESS,
         FAILURE,
         EXIT
     }
 
-    InMemoryRepository<CustomerPurchaseEntity> customerPurchaseRepository = new InMemoryRepository<>();
-    InMemoryRepository<InventoryEntity> inventoryRepository = new InMemoryRepository<>();
-    InMemoryRepository<FinancialEntity> financialRepository = new InMemoryRepository<>();
-    InMemoryRepository<SupplierEntity> supplierRepository = new InMemoryRepository<>();
-    InMemoryRepository<SupplierPurchaseEntity> supplierPurchaseRepository = new InMemoryRepository<>();
+    Repository<CustomerPurchaseEntity> customerPurchaseRepository = new InMemoryRepository<>();
+    Repository<InventoryEntity> inventoryRepository = new InMemoryRepository<>();
+    Repository<FinancialEntity> financialRepository = new InMemoryRepository<>();
+    Repository<SupplierEntity> supplierRepository = new InMemoryRepository<>();
+    Repository<SupplierPurchaseEntity> supplierPurchaseRepository = new InMemoryRepository<>();
 
     Result execute();
 }

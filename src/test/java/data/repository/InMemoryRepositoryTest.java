@@ -6,7 +6,6 @@ import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.repository.InMemoryRepository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -20,7 +19,7 @@ public class InMemoryRepositoryTest {
     public void setUp() {
         repository = new InMemoryRepository<>();
 
-        repository.importData(List.of(
+        repository.createMany(List.of(
                 new SupplierEntity("Supplier A", "123-456-7890", "supplier_a@email.com"),
                 new SupplierEntity("Supplier B", "987-654-3210", "supplier_b@email.com"),
                 new SupplierEntity("Supplier C", "555-555-5555", "supplier_c@email.com")));
