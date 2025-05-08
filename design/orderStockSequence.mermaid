@@ -16,26 +16,17 @@ sequenceDiagram
         i ->> p: "Enter criteria"
         p ->> u: "Enter search criteria"
         u ->> i: searchCriteria
-
-        alt search is valid
-            i ->> q: parse search criteria
-            q ->> i: search criteria
-        else search is invalid
-            i ->> p: "Invalid search criteria"
-            p ->> u: "Invalid search criteria"
-            u ->> i: searchCriteria
-        end
     end
 
     note left of c: New order entity created
-    c ->> q: inventory query
+    c ->> q: inventory query & supplier query
     q ->> ir: search inventory
-    c ->> q: supplier query
     q ->> sr: search suppliers
     alt item or supplier does not exist
         ir ->> c: not found
         c ->> p: "not found"
         p ->> u: "not found"
+    else item and supplier exist
+        c ->> spr: new order
+        c ->> p: Success
     end
-    c->>spr: new order
-    c->>p: Success

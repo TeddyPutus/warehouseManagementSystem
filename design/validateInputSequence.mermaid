@@ -1,0 +1,24 @@
+---
+title: Validate Input Diagram
+---
+
+sequenceDiagram
+    actor u as User
+    participant i as ValidatedInputParser
+    participant p as Printer
+
+    i ->> p: "Enter criteria"
+    p ->> u: "Enter criteria"
+    u ->> i: criteria
+    alt valid input
+        i ->> p: "Valid input"
+        p ->> u: "Valid input"
+    else invalid input
+        i ->> p: "Invalid input"
+        p ->> u: "Invalid input"
+        loop retry until valid
+            i ->> p: "Enter criteria"
+            p ->> u: "Enter criteria"
+            u ->> i: searchCriteria
+        end
+    end
