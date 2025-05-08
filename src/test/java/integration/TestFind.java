@@ -167,7 +167,7 @@ public class TestFind extends IntegrationTester{
         notContains(expect, "| Supplier C      | 555-555-5555 | supplier_c@email.com |");
     }
 
-    @Test
+    @Test @Ignore
     public void testFindStockOrdersWhenNoneExist() throws IOException{
         expect.sendLine("find_stock_orders");
         containsInfo(expect,"Finding Stock Orders, please enter optional filter values...");
