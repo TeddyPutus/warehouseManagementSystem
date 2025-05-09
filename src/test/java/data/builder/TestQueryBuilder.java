@@ -1,55 +1,99 @@
 package data.builder;
 
 import org.junit.Test;
-import org.mockito.MockedStatic;
 import putus.teddy.data.builder.*;
-import putus.teddy.data.entity.CustomerPurchaseEntity;
-import putus.teddy.data.entity.InventoryEntity;
-import putus.teddy.data.entity.SupplierEntity;
-import putus.teddy.data.entity.SupplierPurchaseEntity;
-import putus.teddy.data.parser.InputParser;
+import putus.teddy.data.entity.*;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 public class TestQueryBuilder {
-    @Test
-    public void testSupplierSearchQuery() {
-            List<Predicate<SupplierEntity>> query = QueryBuilder.supplierSearch("Test name", "Test phone", "Test email");
-            assertTrue("Test name", query.getFirst().test(new SupplierEntity("Test name", "Test phone", "Test email")));
 
+    @Test
+    public void testSearchSupplierById() {
+        SupplierEntity entity = new SupplierEntity("Test name", "Test phone", "Test email");
+        List<Predicate<SupplierEntity>> query = QueryBuilder.searchSupplierById(entity.getId());
+
+        assertEquals(1, query.size());
+        assertTrue(query.getFirst().test(entity));
+
+        assertFalse(query.getFirst().test(new SupplierEntity("Another name", "Another phone", "Another email")));
+
+        List<Predicate<SupplierEntity>> nullQuery = QueryBuilder.searchSupplierById(null);
+        List<Predicate<SupplierEntity>> emptyQuery = QueryBuilder.searchSupplierById("");
+
+        assertTrue(nullQuery.getFirst().test(entity));
+        assertTrue(emptyQuery.getFirst().test(entity));
     }
 
     @Test
-    public void testInventorySearchQuery() {
-            List<Predicate<InventoryEntity>> query = QueryBuilder.searchInventory("Test String", 6, 10.0);
-            assertTrue(query.getFirst().test(new InventoryEntity("Test String", 5, 10.0)));
-            assertFalse(query.get(1).test(new InventoryEntity("Test String", 5, 10.0)));
-            assertTrue(query.get(2).test(new InventoryEntity("Test String", 5, 10.0)));
+    public void testSearchSupplierByName() {
+        SupplierEntity entity = new SupplierEntity("Test name", "Test phone", "Test email");
+        List<Predicate<SupplierEntity>> query = QueryBuilder.searchSupplierByName(entity.getName());
 
+        assertEquals(1, query.size());
+        assertTrue(query.getFirst().test(entity));
+
+        assertFalse(query.getFirst().test(new SupplierEntity("Another name", "Another phone", "Another email")));
+
+        List<Predicate<SupplierEntity>> nullQuery = QueryBuilder.searchSupplierByName(null);
+        List<Predicate<SupplierEntity>> emptyQuery = QueryBuilder.searchSupplierByName("");
+
+        assertTrue(nullQuery.getFirst().test(entity));
+        assertTrue(emptyQuery.getFirst().test(entity));
     }
 
     @Test
-    public void testCustomerOrderQuery() {
-            CustomerPurchaseEntity customerPurchase = new CustomerPurchaseEntity("Test customer", "Test item", 5, "2025-01-01");
+    public void testSearchInventoryByItemName() {
+        InventoryEntity entity = new InventoryEntity("Test item", 5, 10.0);
+        List<Predicate<InventoryEntity>> query = QueryBuilder.searchInventoryByItemName(entity.getItemName());
 
-            List<Predicate<CustomerPurchaseEntity>> query = QueryBuilder.searchCustomerOrder("Test customer", "A different item", 5, "2025");
+        assertEquals(1, query.size());
+        assertTrue(query.getFirst().test(entity));
 
-            assertTrue(query.getFirst().test(customerPurchase));
-            assertFalse(query.get(1).test(customerPurchase));
-            assertTrue(query.get(2).test(customerPurchase));
+        assertFalse(query.getFirst().test(new InventoryEntity("Another item", 5, 10.0)));
 
+        List<Predicate<InventoryEntity>> nullQuery = QueryBuilder.searchInventoryByItemName(null);
+        List<Predicate<InventoryEntity>> emptyQuery = QueryBuilder.searchInventoryByItemName("");
+
+        assertTrue(nullQuery.getFirst().test(entity));
+        assertTrue(emptyQuery.getFirst().test(entity));
     }
 
     @Test
-    public void testSupplierPurchaseQuery() {
-            SupplierPurchaseEntity purchase = new SupplierPurchaseEntity("Test supplier", "2025-01-01", "Test Item", 5, 10.0);
-             List<Predicate<SupplierPurchaseEntity>> query = QueryBuilder.searchSupplierPurchase("Test supplier", "Some other item", 5, 10.0, "2025");
-            assertFalse(query.get(1).test(purchase));
+    public void testSearchSupplierPurchaseById() {
+        SupplierPurchaseEntity entity = new SupplierPurchaseEntity("Test supplier", "2025-01-01", "Test item", 5, 10.0);
+        List<Predicate<SupplierPurchaseEntity>> query = QueryBuilder.searchSupplierPurchaseById(entity.getId());
+
+        assertEquals(1, query.size());
+        assertTrue(query.getFirst().test(entity));
+
+        assertFalse(query.getFirst().test(new SupplierPurchaseEntity("Another supplier", "2025-01-01", "Another item", 6, 20.0)));
+
+        List<Predicate<SupplierPurchaseEntity>> nullQuery = QueryBuilder.searchSupplierPurchaseById(null);
+        List<Predicate<SupplierPurchaseEntity>> emptyQuery = QueryBuilder.searchSupplierPurchaseById("");
+
+        assertTrue(nullQuery.getFirst().test(entity));
+        assertTrue(emptyQuery.getFirst().test(entity));
     }
+
+    @Test
+    public void testSearchFinancial(){
+        FinancialEntity entity = new FinancialEntity("Test item", 100, 50, 0.0, 0.0);
+
+        List<Predicate<FinancialEntity>> query = QueryBuilder.searchFinancial(entity.getItemName());
+        assertTrue(query.getFirst().test(entity));
+
+        assertFalse(query.getFirst().test(new FinancialEntity("Another item", 100, 50, 0.0, 0.0)));
+
+        List<Predicate<FinancialEntity>> nullQuery = QueryBuilder.searchFinancial(null);
+        List<Predicate<FinancialEntity>> emptyQuery = QueryBuilder.searchFinancial("");
+
+        assertTrue(nullQuery.getFirst().test(entity));
+    }
+
 
 }
+
