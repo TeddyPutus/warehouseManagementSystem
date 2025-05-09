@@ -41,6 +41,16 @@ public class InMemoryRepository<T> implements Repository<T>{
         }
     }
 
+    public Stream<T> findAny(List<Predicate<T>> predicates) {
+        try {
+            return entities.stream()
+                    .filter(entity -> predicates.stream().anyMatch(predicate -> predicate.test(entity)));
+        } catch (Exception e) {
+            System.out.println("Error finding entities: " + e.getMessage());
+            return Stream.empty();
+        }
+    }
+
     public boolean deleteOne(List<Predicate<T>> query) {
         return entities.remove(findOne(query));
     }

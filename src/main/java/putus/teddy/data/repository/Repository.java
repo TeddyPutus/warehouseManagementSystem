@@ -15,6 +15,8 @@ public interface Repository<T> {
 
     Stream<T> findMany(List<Predicate<T>> query);
 
+    Stream<T> findAny(List<Predicate<T>> predicates);
+
     boolean deleteOne(List<Predicate<T>> query);
 
     int deleteMany(List<Predicate<T>> query);
