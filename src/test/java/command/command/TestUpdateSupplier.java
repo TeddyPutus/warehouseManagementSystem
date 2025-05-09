@@ -96,4 +96,30 @@ public class TestUpdateSupplier {
         assertEquals("email", entity1.getEmail());
         assertEquals("Supplier 1", entity1.getName());
     }
+
+    @Test
+    public void testSupplierAlreadyExists(){
+        SupplierEntity entity2 = new SupplierEntity("Supplier 2", "1234", "email");
+        supplierRepository.create(entity2);
+
+        mockParser.when(
+                () -> ValidatedInputParser.parseString("Supplier ID", true, 1, 36))
+                .thenReturn(entity1.getId());
+        mockParser.when(
+                () -> ValidatedInputParser.parseString("name", false, 1, 15)
+        ).thenReturn("Supplier 2");
+        mockParser.when(
+                () -> ValidatedInputParser.parseString("phone number", false, 1, 12)
+        ).thenReturn("");
+        mockParser.when(
+                () -> ValidatedInputParser.parseString("email", false, 1, 20)
+        ).thenReturn("");
+
+        Command.Result result = command.execute();
+
+        assertEquals(Command.Result.FAILURE, result);
+        mockPrinter.verify(() -> Printer.info("Updating supplier information..."));
+        mockPrinter.verify(() -> Printer.error("Name already exists.\nSupplier already exists."));
+        mockPrinter.verifyNoMoreInteractions();
+    }
 }
