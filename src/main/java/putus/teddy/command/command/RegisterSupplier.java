@@ -7,8 +7,6 @@ import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
-import java.util.Map;
-
 public class RegisterSupplier implements Command {
 
     private final Repository<SupplierEntity> supplierRepository;
@@ -23,7 +21,7 @@ public class RegisterSupplier implements Command {
 
         SupplierEntity newSupplier = createSupplierEntity();
 
-        if(supplierRepository.findOne(QueryBuilder.supplierSearchByName(newSupplier.getName())) != null) {
+        if(supplierRepository.findOne(QueryBuilder.searchSupplierByName(newSupplier.getName())) != null) {
             Printer.error("Supplier already exists.");
             return Result.FAILURE;
         }

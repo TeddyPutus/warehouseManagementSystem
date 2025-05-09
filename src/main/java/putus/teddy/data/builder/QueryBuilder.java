@@ -18,7 +18,7 @@ public class QueryBuilder {
         return doubleValue == null || doubleValue.equals(Double.MIN_VALUE);
     }
 
-    public static List<Predicate<SupplierEntity>> supplierSearch(String name, String phoneNumber, String email) {
+    public static List<Predicate<SupplierEntity>> searchSupplier(String name, String phoneNumber, String email) {
        return List.of(
                entity -> QueryBuilder.isEmptyString(name) || entity.getName().equals(name),
                entity -> QueryBuilder.isEmptyString(phoneNumber) || entity.getPhoneNumber().equals(phoneNumber),
@@ -26,13 +26,13 @@ public class QueryBuilder {
        );
     }
 
-    public static List<Predicate<SupplierEntity>> supplierSearchById(String id) {
+    public static List<Predicate<SupplierEntity>> searchSupplierById(String id) {
         return List.of(
                 entity -> QueryBuilder.isEmptyString(id) || entity.getId().equals(id)
         );
     }
 
-    public static List<Predicate<SupplierEntity>> supplierSearchByName(String name) {
+    public static List<Predicate<SupplierEntity>> searchSupplierByName(String name) {
         return List.of(
                 entity -> QueryBuilder.isEmptyString(name) || entity.getName().equals(name)
         );
