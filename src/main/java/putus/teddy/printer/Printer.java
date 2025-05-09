@@ -73,7 +73,7 @@ public class Printer {
         info("-".repeat(tableHead.length()));
     }
 
-    public static void printTable(Stream<DataEntity> dataEntities, String tableHead) {
+    public static void printTable(Stream<? extends DataEntity> dataEntities, String tableHead) {
         printTableHead(tableHead);
         int[] rowCount = {0};
         dataEntities.forEach(entity -> {
