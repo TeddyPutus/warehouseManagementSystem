@@ -9,7 +9,6 @@ import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 public class OrderStock implements Command {
 
@@ -55,7 +54,7 @@ public class OrderStock implements Command {
     }
 
     private void validateSupplier(String supplierName) throws Exception {
-        if (supplierRepository.findOne(QueryBuilder.supplierSearchByName(supplierName)) == null) {
+        if (supplierRepository.findOne(QueryBuilder.searchSupplierByName(supplierName)) == null) {
             throw new Exception("Supplier does not exist. Please register supplier first.");
         }
     }
