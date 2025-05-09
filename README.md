@@ -75,3 +75,16 @@ Valid commands are:
 ## System Design
 
 See [Design documentation](design/design.md) for the system design.
+
+## Generating and Viewing Javadocs
+
+Javadocs have been added to some classes and methods. 
+They can be viewed directly in the code, or viewed from a generated HTML page.
+
+To generate the HTML, run the following command:
+
+```bash
+mvn javadoc:javadoc
+```
+
+The HTML will then be viewable by opening `target/site/apidocs/index.html`.

@@ -4,13 +4,32 @@ import putus.teddy.printer.Printer;
 
 import java.util.Scanner;
 
+/**
+ * InputParser is responsible for parsing user input.
+ * It provides methods to parse different types of input (String, Integer, Double).
+ */
 public class InputParser {
     private static Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Sets the scanner to be used for input parsing.
+     *
+     * @param scanner The scanner to be set.
+     */
     public static void setScanner(Scanner scanner) {
         InputParser.scanner = scanner;
     }
 
+    /**
+     * Parses a double value from user input.
+     * If the input is invalid, it will prompt the user again.
+     * If the field is required and the input is empty, it will prompt the user again.
+     * If the field is not required and the input is empty, it will return Double.MIN_VALUE.
+     *
+     * @param fieldName The name of the field to be parsed.
+     * @param isRequired Indicates if the field is required.
+     * @return The parsed double value.
+     */
     public static Double parseDouble(String fieldName, boolean isRequired) {
         try {
             Printer.info("Enter " + fieldName + ": ", false);
@@ -28,6 +47,16 @@ public class InputParser {
         }
     }
 
+    /**
+     * Parses an integer value from user input.
+     * If the input is invalid, it will prompt the user again.
+     * If the field is required and the input is empty, it will prompt the user again.
+     * If the field is not required and the input is empty, it will return Integer.MIN_VALUE.
+     *
+     * @param fieldName The name of the field to be parsed.
+     * @param isRequired Indicates if the field is required.
+     * @return The parsed integer value.
+     */
     public static Integer parseInt(String fieldName, boolean isRequired) {
         try {
             Printer.info("Enter " + fieldName + ": ", false);
@@ -46,6 +75,14 @@ public class InputParser {
         }
     }
 
+    /**
+     * Parses a string value from user input.
+     * If the field is required and the input is empty, it will prompt the user again.
+     *
+     * @param fieldName The name of the field to be parsed.
+     * @param isRequired Indicates if the field is required.
+     * @return The parsed string value.
+     */
     public static String parseString(String fieldName, boolean isRequired) {
         Printer.info("Enter " + fieldName + ": ", false);
         String input = scanner.nextLine();

@@ -1,8 +1,11 @@
 package putus.teddy.data.entity;
 
-import java.util.Map;
 import java.util.UUID;
 
+/**
+ * SupplierEntity represents a supplier.
+ * It contains information about the supplier's name, phone number, and email.
+ */
 public class SupplierEntity implements DataEntity {
     private final String id = UUID.randomUUID().toString();
     private String name;

@@ -17,6 +17,7 @@ classDiagram
     }
 
     class InMemoryRepository {
+        +List entities
     }
 
     class DataEntity {
@@ -82,6 +83,6 @@ classDiagram
     InMemoryRepository <--> Command: Command sends querys/entities,\nReceives Entities
     DataEntity .. InMemoryRepository: Stores
     DataEntity .. Command: Uses
-    CommandRegistry *-- Command: Contains Map of Commands
+    CommandRegistry *-- Command: Contains Map of Commands\nInjects dependencies into Commands
     CommandParser --|> CommandRegistry: Uses to select command
     note "NOTE: Implementations of Command\n may use multiple repositories as needed."

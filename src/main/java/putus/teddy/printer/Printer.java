@@ -5,6 +5,11 @@ import putus.teddy.data.entity.DataEntity;
 import java.io.PrintStream;
 import java.util.stream.Stream;
 
+/**
+ * Printer class is responsible for printing messages to the console.
+ * It provides methods to print messages in different colors and formats.
+ * It also provides a method to print a logo and a table of data entities.
+ */
 public class Printer {
     public static final String RESET = "\u001B[0m";
     public static final String RED = "\u001B[31m";
@@ -14,6 +19,14 @@ public class Printer {
 
     private static PrintStream outputStream = System.out;
 
+    /**
+     * Prints a message to the console.
+     * If isNewLine is true, it prints the message with a new line.
+     * If isNewLine is false, it prints the message without a new line.
+     *
+     * @param message   The message to be printed.
+     * @param isNewLine Whether to print the message with a new line or not.
+     */
     public static void info(String message, boolean isNewLine) {
         if(isNewLine) {
             outputStream.println(message);
@@ -22,26 +35,49 @@ public class Printer {
         }
     }
 
+    /**
+     * Sets the output stream for the printer.
+     * This can be used to redirect the output to a different stream.
+     *
+     * @param outputStream The output stream to be set.
+     */
     public static void setOutputStream(PrintStream outputStream) {
         Printer.outputStream = outputStream;
     }
 
+    /**
+     * Prints a message to the console in plain text.
+     */
     public static void info(String message) {
         outputStream.println(message);
     }
 
+    /**
+     * Prints a message to the console in red. Resets the color after printing.
+     */
     public static void error(String message) {
         outputStream.println(RED + message + RESET);
     }
 
+    /**
+     * Prints a message to the console in green. Resets the color after printing.
+     */
     public static void success(String message) {
         outputStream.println(GREEN + message + RESET);
     }
 
+    /**
+     * Prints a message to the console in yellow. Resets the color after printing.
+     */
     public static void warning(String message) {
         outputStream.println(YELLOW + message + RESET);
     }
 
+    /**
+     * Prints an alert message to the console in red.
+     * The alert message is formatted with exclamation marks.
+     * Resets the color after printing.
+     */
     public static void alert(String message) {
         String alertString = " ALERT ";
         String exclamationLine = "!".repeat((message.length() - alertString.length()) / 2);
@@ -52,6 +88,9 @@ public class Printer {
         outputStream.println(RED + alertLine + RESET);
     }
 
+    /**
+     * Prints a logo to the console in blue. Resets the color after printing.
+     */
     public static void logo(){
         String logo = """
                 __________        ____ ___   __      __         _________     \s
@@ -67,12 +106,22 @@ public class Printer {
         outputStream.println(BLUE + logo + RESET);
     }
 
+    /**
+     * Prints a formatted table header to the console.
+     */
     private static void printTableHead(String tableHead) {
         info("-".repeat(tableHead.length()));
         info(tableHead);
         info("-".repeat(tableHead.length()));
     }
 
+    /**
+     * Prints a table of data entities to the console.
+     * It first prints the table header and then prints each entity's row.
+     *
+     * @param dataEntities The stream of data entities to be printed. Can be a stream of any child class of DataEntity.
+     * @param tableHead    The header of the table.
+     */
     public static void printTable(Stream<? extends DataEntity> dataEntities, String tableHead) {
         printTableHead(tableHead);
         int[] rowCount = {0};

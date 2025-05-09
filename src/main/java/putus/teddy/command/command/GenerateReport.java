@@ -4,6 +4,10 @@ import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
+/**
+ * Command to generate a financial report.
+ * It calculates total sales, total expenses, and net profit.
+ */
 public class GenerateReport implements Command {
 
     private final Repository<FinancialEntity> financialRepository;
@@ -12,6 +16,12 @@ public class GenerateReport implements Command {
         this.financialRepository = financialRepository;
     }
 
+    /**
+     * Main method of the command.
+     * It retrieves all financial records, calculates totals, and prints the report.
+     *
+     * @return Success.
+     */
     public Result execute() {
         Printer.info("Generating financial report...");
 
@@ -22,10 +32,10 @@ public class GenerateReport implements Command {
                 FinancialEntity.getTableHead()
         );
 
-        financialRepository.findAll().forEach( entity -> {
-            totals[0] += entity.getTotalRevenue();
-            totals[1] += entity.getTotalCost();
-        }
+        financialRepository.findAll().forEach(entity -> {
+                    totals[0] += entity.getTotalRevenue();
+                    totals[1] += entity.getTotalCost();
+                }
         );
 
         Printer.info("Total Sales: " + totals[0]);
