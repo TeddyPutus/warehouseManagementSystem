@@ -25,7 +25,7 @@ public class FindStockOrders implements Command {
                         ValidatedInputParser.parseQuantity("quantity", false),
                         ValidatedInputParser.parseAmount("price", false),
                         ValidatedInputParser.parseString("date", false, 1, 10)
-                )).map(entity -> (DataEntity) entity),
+                )),
                 SupplierPurchaseEntity.getTableHead()
         );
 

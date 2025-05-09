@@ -22,7 +22,7 @@ public class FindInventory implements Command {
                         ValidatedInputParser.parseString("name", false,1,15),
                         ValidatedInputParser.parseQuantity("quantity", false),
                         ValidatedInputParser.parseAmount("price", false)
-                )).map(entity -> (DataEntity) entity),
+                )),
                 InventoryEntity.getTableHead()
         );
 

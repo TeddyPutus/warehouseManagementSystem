@@ -24,7 +24,7 @@ public class FindOrders implements Command{
                         ValidatedInputParser.parseString("itemName", false, 1, 15),
                         ValidatedInputParser.parseQuantity("quantity", false),
                         ValidatedInputParser.parseString("date", false,1,10)
-                )).map(entity -> (DataEntity) entity),
+                )),
                 CustomerPurchaseEntity.getTableHead()
         );
 

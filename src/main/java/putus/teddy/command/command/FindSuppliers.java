@@ -23,7 +23,7 @@ public class FindSuppliers implements Command {
                             ValidatedInputParser.parseString("name", false, 1, 15),
                             ValidatedInputParser.parseString("phone number", false, 1, 12),
                             ValidatedInputParser.parseString("email", false, 1, 20)
-                 )).map(entity -> (DataEntity) entity),
+                 )),
                  SupplierEntity.getTableHead()
          );
 
