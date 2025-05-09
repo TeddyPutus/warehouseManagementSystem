@@ -7,8 +7,11 @@ import putus.teddy.data.repository.Repository;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
-import java.util.Map;
-
+/*
+ * Command to register a new item in the inventory.
+ * This class handles the creation of a new inventory entity,
+ * validates the item name, and registers it in the system.
+ */
 public class RegisterItem implements Command {
 
     private final Repository<FinancialEntity> financialRepository;
@@ -19,6 +22,13 @@ public class RegisterItem implements Command {
         this.inventoryRepository = inventoryRepository;
     }
 
+    /**
+     * Main method of the command.
+     * Creates a new inventory entity.
+     * Validates the item name before registering it.
+     *
+     * @return Success or Failure.
+     */
     public Result execute() {
         Printer.info("Registering item...");
 
@@ -39,6 +49,11 @@ public class RegisterItem implements Command {
         return Result.SUCCESS;
     }
 
+    /**
+     * Creates a new inventory entity based on user input.
+     *
+     * @return A new InventoryEntity object.
+     */
     private InventoryEntity createInventoryEntity() {
         return new InventoryEntity(
                 ValidatedInputParser.parseString("name", true, 1, 15),

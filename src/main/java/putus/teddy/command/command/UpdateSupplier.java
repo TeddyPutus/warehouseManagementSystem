@@ -7,6 +7,11 @@ import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
+/**
+ * Command to update an existing supplier's information in the system.
+ * This class handles the retrieval of the supplier entity,
+ * validates the new information, and updates it in the repository.
+ */
 public class UpdateSupplier implements Command {
 
     private final Repository<SupplierEntity> supplierRepository;
@@ -16,6 +21,14 @@ public class UpdateSupplier implements Command {
         this.supplierRepository = supplierRepository;
     }
 
+
+    /**
+     * Main method of the command.
+     * Retrieves the supplier ID from user input,
+     * validates the new information, and updates the supplier entity.
+     *
+     * @return Success or Failure.
+     */
     public Result execute() {
         Printer.info("Updating supplier information...");
         String supplierId = ValidatedInputParser.parseString("Supplier ID", true, 1, 36);
@@ -26,9 +39,9 @@ public class UpdateSupplier implements Command {
             return Result.FAILURE;
         }
 
-        try{
+        try {
             updateSupplier(supplier);
-        }catch(Exception e){
+        } catch (Exception e) {
             Printer.error(e.getMessage());
             return Result.FAILURE;
         }
@@ -38,7 +51,13 @@ public class UpdateSupplier implements Command {
         return Result.SUCCESS;
     }
 
-    private void updateSupplier(SupplierEntity supplier) throws Exception{
+    /**
+     * Updates the supplier entity with new information.
+     *
+     * @param supplier The supplier entity to be updated.
+     * @throws Exception If validation fails or if the supplier already exists.
+     */
+    private void updateSupplier(SupplierEntity supplier) throws Exception {
         String name = ValidatedInputParser.parseString("name", false, 1, 15);
         String phoneNumber = ValidatedInputParser.parseString("phone number", false, 1, 12);
         String email = ValidatedInputParser.parseString("email", false, 1, 20);
@@ -50,18 +69,27 @@ public class UpdateSupplier implements Command {
         if (!email.isEmpty()) supplier.setEmail(email);
     }
 
+    /**
+     * Validates the new supplier information.
+     *
+     * @param name        The new name of the supplier.
+     * @param phoneNumber The new phone number of the supplier.
+     * @param email       The new email of the supplier.
+     * @throws Exception If validation fails or if the supplier name, phone number or email already exists.
+     */
     private void validateSupplier(String name, String phoneNumber, String email) throws Exception {
         StringBuilder errorString = new StringBuilder();
 
         supplierRepository.findAny(QueryBuilder.searchSupplier(name, phoneNumber, email)).forEach(existingSupplier -> {
             if (existingSupplier != null && existingSupplier != supplier) {
                 if (existingSupplier.getName().equals(name)) errorString.append("Name already exists.\n");
-                if (existingSupplier.getPhoneNumber().equals(phoneNumber)) errorString.append("Phone number already exists.\n");
+                if (existingSupplier.getPhoneNumber().equals(phoneNumber))
+                    errorString.append("Phone number already exists.\n");
                 if (existingSupplier.getEmail().equals(email)) errorString.append("Email already exists.\n");
             }
         });
 
-        if(!errorString.isEmpty()){
+        if (!errorString.isEmpty()) {
             throw new Exception(errorString + "Supplier already exists.");
         }
     }

@@ -8,10 +8,12 @@ import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
-import java.util.Map;
-
 import static putus.teddy.data.entity.SupplierPurchaseEntity.Status.PENDING;
 
+/**
+ * Handles the delivery of supplier orders.
+ * This class validates the order, updates stock levels, and updates financial records.
+ */
 public class TakeDelivery implements Command {
 
     private final Repository<SupplierPurchaseEntity> supplierPurchaseRepository;
@@ -24,17 +26,23 @@ public class TakeDelivery implements Command {
         this.financialRepository = financialRepository;
     }
 
+    /**
+     * Main method of the command.
+     * Takes Order ID as user input using ValidatedInputParser, and updates the supplier purchase entity to delivered; stock levels in inventory; and updates financial data.
+     *
+     * @return Success or Failure.
+     */
     public Result execute() {
         Printer.info("Taking delivery...");
         SupplierPurchaseEntity order;
         InventoryEntity inventoryEntity;
         FinancialEntity financialEntity;
 
-        try{
+        try {
             order = getOrder();
             inventoryEntity = getInventory(order.getItemName());
             financialEntity = getFinancial(order.getItemName());
-        }catch(Exception e){
+        } catch (Exception e) {
             Printer.error(e.getMessage());
             return Result.FAILURE;
         }
@@ -51,27 +59,47 @@ public class TakeDelivery implements Command {
         return Result.SUCCESS;
     }
 
+    /**
+     * Retrieves the financial entity based on the item name.
+     *
+     * @param itemName The name of the item.
+     * @return The financial entity.
+     * @throws Exception If the financial entity is not found.
+     */
     private FinancialEntity getFinancial(String itemName) throws Exception {
 
         FinancialEntity financialEntity = financialRepository.findOne(QueryBuilder.searchFinancial(itemName));
 
-        if(financialEntity == null){
+        if (financialEntity == null) {
             throw new Exception("Financial entity not found.");
         }
         return financialEntity;
     }
 
+    /**
+     * Retrieves the inventory entity based on the item name.
+     *
+     * @param itemName The name of the item.
+     * @return The inventory entity.
+     * @throws Exception If the inventory entity is not found.
+     */
     private InventoryEntity getInventory(String itemName) throws Exception {
         InventoryEntity inventoryEntity = inventoryRepository.findOne(QueryBuilder.searchInventoryByItemName(itemName));
 
-        if(inventoryEntity == null){
+        if (inventoryEntity == null) {
             throw new Exception("Item not found in inventory.");
         }
 
         return inventoryEntity;
     }
 
-    private SupplierPurchaseEntity getOrder() throws Exception{
+    /**
+     * Retrieves the order based on the order ID.
+     *
+     * @return The supplier purchase entity.
+     * @throws Exception If the order is not found or already delivered.
+     */
+    private SupplierPurchaseEntity getOrder() throws Exception {
         String orderId = ValidatedInputParser.parseString("Order ID", true, 1, 36);
         SupplierPurchaseEntity order = supplierPurchaseRepository.findOne(QueryBuilder.searchSupplierPurchaseById(orderId));
 

@@ -10,6 +10,12 @@ import putus.teddy.printer.Printer;
 import java.util.EnumMap;
 import java.util.List;
 
+/**
+ * CommandRegistry is responsible for managing and executing commands.
+ * It contains a mapping of command types to their respective command handlers.
+ * The CommandRegistry also injects dependencies into the Commands.
+ * The registry also sets up test data for the repositories.
+ */
 public class CommandRegistry {
     private final EnumMap<CommandType, Command> commandHandlers = new EnumMap<>(CommandType.class);
 
@@ -67,6 +73,14 @@ public class CommandRegistry {
     }
 
 
+    /**
+     * Processes the command based on the command type.
+     * It retrieves the appropriate command handler from the registry
+     * and executes it.
+     *
+     * @param command The command type to be processed.
+     * @return The result of the command execution.
+     */
     public Command.Result processCommand(CommandType command){
         Command handler = commandHandlers.getOrDefault(command, commandHandlers.get(CommandType.HELP));
 
@@ -78,6 +92,11 @@ public class CommandRegistry {
         return Command.Result.FAILURE;
     }
 
+    /**
+     * Sets up test data for the repositories.
+     * This method creates and populates the repositories with sample data
+     * for testing purposes.
+     */
     public void setUpTestData(){
         supplierRepository.createMany(List.of(
                 new SupplierEntity("Supplier A", "123-456-7890", "supplier_a@email.com"),

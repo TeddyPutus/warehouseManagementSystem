@@ -1,8 +1,11 @@
 package putus.teddy.data.entity;
 
-import java.util.Map;
 import java.util.UUID;
 
+/**
+ * SupplierPurchaseEntity represents a purchase made from a supplier.
+ * It contains information about the supplier, the item purchased, quantity, price per unit, total price, and purchase date.
+ */
 public class SupplierPurchaseEntity implements DataEntity {
     public enum Status {
         PENDING,

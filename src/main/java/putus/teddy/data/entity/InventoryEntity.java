@@ -1,8 +1,10 @@
 package putus.teddy.data.entity;
 
-import java.util.Map;
-
-public class InventoryEntity implements DataEntity{
+/**
+ * InventoryEntity represents an item in the inventory.
+ * It contains information about the item name, quantity, and price per unit.
+ */
+public class InventoryEntity implements DataEntity {
     private String itemName;
     private Integer quantity;
     private Double pricePerUnit;

@@ -1,9 +1,12 @@
 package putus.teddy.data.entity;
 
-import java.util.Map;
 import java.util.UUID;
 
-public class CustomerPurchaseEntity implements DataEntity{
+/**
+ * CustomerPurchaseEntity represents a purchase made by a customer.
+ * It contains information about the customer, the item purchased, quantity, total price, and purchase date.
+ */
+public class CustomerPurchaseEntity implements DataEntity {
     private final String id = UUID.randomUUID().toString();
     private String customerName;
     private String itemName;
