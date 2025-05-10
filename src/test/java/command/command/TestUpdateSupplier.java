@@ -51,13 +51,13 @@ public class TestUpdateSupplier {
                 .thenReturn(entity1.getId());
         mockParser.when(
                 () -> ValidatedInputParser.parseString("name", false, 1, 15)
-        ).thenReturn("");
+        ).thenReturn("Supplier XYZ");
         mockParser.when(
                 () -> ValidatedInputParser.parseString("phone number", false, 1, 12)
         ).thenReturn("5678");
         mockParser.when(
                 () -> ValidatedInputParser.parseString("email", false, 1, 20)
-        ).thenReturn("");
+        ).thenReturn("new_email");
 
         Command.Result result = command.execute();
 
@@ -68,6 +68,8 @@ public class TestUpdateSupplier {
         assertEquals(Command.Result.SUCCESS, result);
 
         assertEquals("5678", entity1.getPhoneNumber());
+        assertEquals("new_email", entity1.getEmail());
+        assertEquals("Supplier XYZ", entity1.getName());
     }
 
     @Test
@@ -101,16 +103,16 @@ public class TestUpdateSupplier {
         ).thenReturn("Supplier 2");
         mockParser.when(
                 () -> ValidatedInputParser.parseString("phone number", false, 1, 12)
-        ).thenReturn("");
+        ).thenReturn("1234");
         mockParser.when(
                 () -> ValidatedInputParser.parseString("email", false, 1, 20)
-        ).thenReturn("");
+        ).thenReturn("email");
 
         Command.Result result = command.execute();
 
         assertEquals(Command.Result.FAILURE, result);
         mockPrinter.verify(() -> Printer.info("Updating supplier information..."));
-        mockPrinter.verify(() -> Printer.error("Name already exists.\nSupplier already exists."));
+        mockPrinter.verify(() -> Printer.error("Name already exists.\nPhone number already exists.\nEmail already exists.\nSupplier already exists."));
         mockPrinter.verifyNoMoreInteractions();
     }
 }

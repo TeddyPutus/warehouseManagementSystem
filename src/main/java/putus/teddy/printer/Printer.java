@@ -16,6 +16,17 @@ public class Printer {
     public static final String GREEN = "\u001B[32m";
     public static final String YELLOW = "\u001B[33m";
     public static final String BLUE = "\u001B[34m";
+    public static final String logo = """
+            __________        ____ ___   __      __         _________     \s
+            \\______   \\ ____ |    |   \\ /  \\    /  \\_____  /   _____/     \s
+             |    |  _//    \\|    |   / \\   \\/\\/   /     \\ \\_____  \\      \s
+             |    |   \\   |  \\    |  /   \\        /  Y Y  \\/        \\     \s
+             |______  /___|  /______/     \\__/\\  /|__|_|  /_______  /     \s
+                    \\/     \\/                  \\/       \\/        \\/      \s
+          ______   ______   ______   ______   ______   ______   ______   ______\s
+         /_____/  /_____/  /_____/  /_____/  /_____/  /_____/  /_____/  /_____/\s
+                                                                          \s
+                                                                          \s""";
 
     private static PrintStream outputStream = System.out;
 
@@ -85,17 +96,6 @@ public class Printer {
      * Prints a logo to the console in blue. Resets the color after printing.
      */
     public static void logo() {
-        String logo = """
-                __________        ____ ___   __      __         _________     \s
-                \\______   \\ ____ |    |   \\ /  \\    /  \\_____  /   _____/     \s
-                 |    |  _//    \\|    |   / \\   \\/\\/   /     \\ \\_____  \\      \s
-                 |    |   \\   |  \\    |  /   \\        /  Y Y  \\/        \\     \s
-                 |______  /___|  /______/     \\__/\\  /|__|_|  /_______  /     \s
-                        \\/     \\/                  \\/       \\/        \\/      \s
-                  ______   ______   ______   ______   ______   ______   ______\s
-                 /_____/  /_____/  /_____/  /_____/  /_____/  /_____/  /_____/\s
-                                                                              \s
-                                                                              \s""";
         outputStream.println(BLUE + logo + RESET);
     }
 
@@ -118,13 +118,18 @@ public class Printer {
     public static void printTable(Stream<? extends DataEntity> dataEntities, String tableHead) {
         printTableHead(tableHead);
         int[] rowCount = {0};
-        dataEntities.forEach(entity -> {
-            infoInline(entity.getTableRow());
-            rowCount[0]++;
-        });
-
-        if (rowCount[0] == 0) {
-            warning("No data found.");
+        try{
+            dataEntities.forEach(entity -> {
+                infoInline(entity.getTableRow());
+                rowCount[0]++;
+            });
+        } catch (Exception e) {
+            error("Error printing table: " + e.getMessage());
+        }finally{
+            if (rowCount[0] == 0) {
+                warning("No data found.");
+            }
         }
+
     }
 }

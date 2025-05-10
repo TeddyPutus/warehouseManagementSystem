@@ -1,11 +1,15 @@
 package data.repository;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import putus.teddy.data.builder.QueryBuilder;
 import putus.teddy.data.entity.SupplierEntity;
 import putus.teddy.data.repository.InMemoryRepository;
+import putus.teddy.printer.Printer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -14,9 +18,13 @@ import static org.junit.Assert.*;
 
 public class InMemoryRepositoryTest {
     private InMemoryRepository<SupplierEntity>  repository;
-
+    static ByteArrayOutputStream outContent;
     @Before
     public void setUp() {
+
+        outContent = new ByteArrayOutputStream();
+        Printer.setOutputStream(new PrintStream(outContent));
+
         repository = new InMemoryRepository<>();
 
         repository.createMany(List.of(
@@ -42,6 +50,18 @@ public class InMemoryRepositoryTest {
         SupplierEntity supplier = repository.findOne(QueryBuilder.searchSupplierByName("Nonexistent Supplier"));
 
         assertNull("Supplier should not exist", supplier);
+    }
+
+    @Test
+    public void testFindOneWhenPredicateThrowsException() {
+        SupplierEntity supplier = repository.findOne(List.of(
+                supplierEntity -> {
+                    throw new RuntimeException("Test exception");
+                }
+        ));
+
+        assertNull("Supplier should be null when exception is thrown", supplier);
+        assertTrue("Error message should be printed", outContent.toString().contains("Error finding entity: Test exception"));
     }
 
     @Test
