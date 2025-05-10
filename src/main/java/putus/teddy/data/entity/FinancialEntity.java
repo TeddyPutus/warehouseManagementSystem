@@ -1,6 +1,6 @@
 package putus.teddy.data.entity;
 
-/*
+/**
  * FinancialEntity represents a financial record of an item.
  * It contains information about the item name, quantity purchased, quantity sold,
  * total revenue, total cost, and profit.
@@ -16,7 +16,7 @@ public class FinancialEntity implements DataEntity {
     private static final String columnWidth = "| %-15s | %-20s | %11s | %11s | %11s | %11s |";
     private static final String tableHead = String.format(columnWidth, "ITEM NAME", "PURCHASED", "SOLD", "OUTGOINGS", "REVENUE", "PROFIT");
 
-    /*
+    /**
      * Constructor for FinancialEntity. Will calculate profit automatically.
      */
     public FinancialEntity(String itemName, Integer quantityPurchased, Integer quantitySold, Double totalCost, Double totalRevenue) {
@@ -29,7 +29,7 @@ public class FinancialEntity implements DataEntity {
         calculateProfit();
     }
 
-    /*
+    /**
      * Calculates the profit based on total revenue and total cost.
      */
     private void calculateProfit() {
@@ -72,7 +72,7 @@ public class FinancialEntity implements DataEntity {
         return profit;
     }
 
-    /*
+    /**
      * Setter for total revenue. Will automatically recalculate profit.
      */
     public void setTotalRevenue(double totalRevenue) {
@@ -80,7 +80,7 @@ public class FinancialEntity implements DataEntity {
         calculateProfit();
     }
 
-    /*
+    /**
      * Setter for total cost. Will automatically recalculate profit.
      */
     public void setTotalCost(double totalCost) {

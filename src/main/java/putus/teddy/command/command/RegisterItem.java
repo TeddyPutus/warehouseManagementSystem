@@ -7,7 +7,7 @@ import putus.teddy.data.repository.Repository;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.printer.Printer;
 
-/*
+/**
  * Command to register a new item in the inventory.
  * This class handles the creation of a new inventory entity,
  * validates the item name, and registers it in the system.

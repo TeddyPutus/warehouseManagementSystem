@@ -19,6 +19,7 @@ public class CommandParser {
      * Parses the command entered by the user.
      * It prompts the user for input and validates the command.
      * If the command is invalid, it will prompt the user again.
+     * While loop has been added to ensure it doesn't crash when running on Docker.
      *
      * @return The parsed CommandType.
      */
