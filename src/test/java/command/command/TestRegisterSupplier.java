@@ -13,10 +13,7 @@ import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.data.repository.InMemoryRepository;
 import putus.teddy.printer.Printer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;

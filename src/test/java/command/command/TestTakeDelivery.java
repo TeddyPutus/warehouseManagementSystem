@@ -7,23 +7,17 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import putus.teddy.command.command.Command;
-import putus.teddy.command.command.FindStockOrders;
 import putus.teddy.command.command.TakeDelivery;
 import putus.teddy.data.entity.FinancialEntity;
 import putus.teddy.data.entity.InventoryEntity;
 import putus.teddy.data.entity.SupplierPurchaseEntity;
-import putus.teddy.data.parser.InputParser;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.data.repository.InMemoryRepository;
 import putus.teddy.printer.Printer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TestTakeDelivery {
     static InMemoryRepository<SupplierPurchaseEntity> supplierPurchaseRepository = new InMemoryRepository<>();

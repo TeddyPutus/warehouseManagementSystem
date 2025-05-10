@@ -6,7 +6,6 @@ import putus.teddy.data.entity.CustomerPurchaseEntity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
 
 import static org.junit.Assert.*;
 

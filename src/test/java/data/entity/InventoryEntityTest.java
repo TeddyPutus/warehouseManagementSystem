@@ -4,10 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import putus.teddy.data.entity.InventoryEntity;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.HashMap;
-
 import static org.junit.Assert.*;
 
 public class InventoryEntityTest {

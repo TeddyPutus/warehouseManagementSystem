@@ -4,12 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import putus.teddy.data.entity.FinancialEntity;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.HashMap;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class FinancialEntityTest {
     private FinancialEntity financialEntity;

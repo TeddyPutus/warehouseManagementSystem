@@ -9,18 +9,13 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import putus.teddy.command.command.Command;
 import putus.teddy.command.command.FindStockOrders;
-import putus.teddy.data.builder.QueryBuilder;
-import putus.teddy.data.entity.CustomerPurchaseEntity;
 import putus.teddy.data.entity.DataEntity;
 import putus.teddy.data.entity.SupplierPurchaseEntity;
 import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.data.repository.InMemoryRepository;
 import putus.teddy.printer.Printer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
