@@ -5,9 +5,6 @@ import putus.teddy.command.command.Command;
 import putus.teddy.command.parser.CommandType;
 import putus.teddy.command.registry.CommandRegistry;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 import static org.junit.Assert.*;
 
 public class TestCommandRegistry {

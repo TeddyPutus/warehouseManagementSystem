@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static net.sf.expectit.matcher.Matchers.contains;
-import static org.junit.Assert.assertFalse;
 import static putus.teddy.printer.Printer.*;
 
 public class CommonSteps {
