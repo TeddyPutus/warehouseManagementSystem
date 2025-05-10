@@ -20,19 +20,12 @@ public class Printer {
     private static PrintStream outputStream = System.out;
 
     /**
-     * Prints a message to the console.
-     * If isNewLine is true, it prints the message with a new line.
-     * If isNewLine is false, it prints the message without a new line.
+     * Prints a message to the console without new line.
      *
      * @param message   The message to be printed.
-     * @param isNewLine Whether to print the message with a new line or not.
      */
-    public static void info(String message, boolean isNewLine) {
-        if(isNewLine) {
-            outputStream.println(message);
-        } else {
-            outputStream.print(message);
-        }
+    public static void infoInline(String message) {
+        outputStream.print(message);
     }
 
     /**
@@ -91,7 +84,7 @@ public class Printer {
     /**
      * Prints a logo to the console in blue. Resets the color after printing.
      */
-    public static void logo(){
+    public static void logo() {
         String logo = """
                 __________        ____ ___   __      __         _________     \s
                 \\______   \\ ____ |    |   \\ /  \\    /  \\_____  /   _____/     \s
@@ -126,7 +119,7 @@ public class Printer {
         printTableHead(tableHead);
         int[] rowCount = {0};
         dataEntities.forEach(entity -> {
-            info(entity.getTableRow(), false);
+            infoInline(entity.getTableRow());
             rowCount[0]++;
         });
 

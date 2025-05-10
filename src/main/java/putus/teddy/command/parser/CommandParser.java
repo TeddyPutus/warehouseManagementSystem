@@ -24,7 +24,7 @@ public class CommandParser {
      * @return The parsed CommandType.
      */
     public static CommandType parseCommand() {
-        Printer.info("Enter command: ", false);
+        Printer.infoInline("Enter command: ");
 
         while (!scanner.hasNextLine()) {}
 

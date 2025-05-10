@@ -32,7 +32,7 @@ public class InputParser {
      */
     public static Double parseDouble(String fieldName, boolean isRequired) {
         try {
-            Printer.info("Enter " + fieldName + ": ", false);
+            Printer.infoInline("Enter " + fieldName + ": ");
             String input = scanner.nextLine();
             if (input.isEmpty() && isRequired) {
                 Printer.warning(fieldName + " is required. Please enter a value.");
@@ -59,7 +59,7 @@ public class InputParser {
      */
     public static Integer parseInt(String fieldName, boolean isRequired) {
         try {
-            Printer.info("Enter " + fieldName + ": ", false);
+            Printer.infoInline("Enter " + fieldName + ": ");
             String input = scanner.nextLine();
 
             if (input.isEmpty() && isRequired) {
@@ -84,7 +84,7 @@ public class InputParser {
      * @return The parsed string value.
      */
     public static String parseString(String fieldName, boolean isRequired) {
-        Printer.info("Enter " + fieldName + ": ", false);
+        Printer.infoInline("Enter " + fieldName + ": ");
         String input = scanner.nextLine();
         if (input.isEmpty() && isRequired) {
             Printer.warning(fieldName + " is required. Please enter a value.");
