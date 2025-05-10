@@ -135,4 +135,21 @@ public class TestCustomerOrder {
         verify(mockInventoryRepository).findOne(anyList());
         verify(mockFinancialRepository).findOne(anyList());
     }
+
+    @Test
+    public void testCustomerOrderErrorUpdatingTotalPrice(){
+        mockParser.when(() -> ValidatedInputParser.parseString("name", true, 1, 15)).thenReturn("customer");
+        mockParser.when(() -> ValidatedInputParser.parseString("itemName", true, 1, 15)).thenReturn("item1");
+        mockParser.when(() -> ValidatedInputParser.parseQuantity(anyString(), anyBoolean())).thenReturn(1);
+
+        when(mockInventoryRepository.findOne(anyList())).thenReturn(new InventoryEntity("item1", 1, null));
+        when(mockFinancialRepository.findOne(anyList())).thenReturn(financialEntity);
+
+        Command.Result result = command.execute();
+
+        mockPrinter.verify(() -> Printer.error(contains("Error generating order:")));
+        assertEquals(Command.Result.FAILURE, result);
+
+        verify(mockCustomerPurchaseRepository, never()).create(any());
+    }
 }

@@ -1,5 +1,7 @@
 package putus.teddy.data.repository;
 
+import putus.teddy.printer.Printer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -53,7 +55,7 @@ public class InMemoryRepository<T> implements Repository<T>{
                     .findFirst()
                     .orElse(null);
         } catch (Exception e) {
-            System.out.println("Error finding entity: " + e.getMessage());
+            Printer.error("Error finding entity: " + e.getMessage());
             return null;
         }
     }
@@ -68,7 +70,7 @@ public class InMemoryRepository<T> implements Repository<T>{
             return entities.stream()
                     .filter(entity -> predicates.stream().allMatch(predicate -> predicate.test(entity)));
         } catch (Exception e) {
-            System.out.println("Error finding entities: " + e.getMessage());
+            Printer.error("Error finding entities: " + e.getMessage());
             return Stream.empty();
         }
     }
@@ -83,7 +85,7 @@ public class InMemoryRepository<T> implements Repository<T>{
             return entities.stream()
                     .filter(entity -> predicates.stream().anyMatch(predicate -> predicate.test(entity)));
         } catch (Exception e) {
-            System.out.println("Error finding entities: " + e.getMessage());
+            Printer.error("Error finding entities: " + e.getMessage());
             return Stream.empty();
         }
     }
@@ -108,7 +110,7 @@ public class InMemoryRepository<T> implements Repository<T>{
         try{
             entities.removeIf(entity -> query.stream().allMatch(predicate -> predicate.test(entity)));
         } catch (Exception e) {
-            System.out.println("Error deleting entities: " + e.getMessage());
+            Printer.error("Error deleting entities: " + e.getMessage());
             return 0;
         }
 
