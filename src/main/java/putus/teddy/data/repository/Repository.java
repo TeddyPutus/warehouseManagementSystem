@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
- * Repository interface for managing entities.
+ * Repository interface for storing data.
  * It provides methods for creating, finding, and deleting entities.
  *
  * @param <T> The type of entity managed by the repository.

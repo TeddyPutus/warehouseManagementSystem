@@ -1,5 +1,10 @@
 package putus.teddy.command.parser;
 
+/**
+ * Enum representing all valid commands.
+ * Each command type corresponds to a specific action that can be performed.
+ * They are mapped to Commands in the command registry.
+ */
 public enum CommandType {
     HELP,
     EXIT,

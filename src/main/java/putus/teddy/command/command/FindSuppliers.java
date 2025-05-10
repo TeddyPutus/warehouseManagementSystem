@@ -6,7 +6,7 @@ import putus.teddy.data.parser.ValidatedInputParser;
 import putus.teddy.data.repository.Repository;
 import putus.teddy.printer.Printer;
 
-/*
+/**
  * Command to find stock supplier information based on optional filters.
  */
 public class FindSuppliers implements Command {

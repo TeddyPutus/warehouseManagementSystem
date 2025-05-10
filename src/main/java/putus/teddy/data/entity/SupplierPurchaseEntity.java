@@ -7,6 +7,10 @@ import java.util.UUID;
  * It contains information about the supplier, the item purchased, quantity, price per unit, total price, and purchase date.
  */
 public class SupplierPurchaseEntity implements DataEntity {
+    /**
+     * Enum representing the status of the purchase.
+     * It can be either PENDING or DELIVERED.
+     */
     public enum Status {
         PENDING,
         DELIVERED,
